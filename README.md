@@ -49,7 +49,7 @@ To setup the project on your machine, do the following:
 
 1. [install poetry](https://github.com/python-poetry/poetry#installation)
 2. `git clone https://github.com/mila-iqia/Casande-RL.git`
-3. `cd casande` 
+3. `cd Casande-RL` 
 4. `poetry install`
 
 
