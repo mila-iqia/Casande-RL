@@ -1,0 +1,64 @@
+paths:
+  CC14:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc14/dxa_cc14_112_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc14/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc14/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc14/test_patients.zip'
+    eval_metrics: 'output/cat_dqn/DXA/CC14/configCC14-1_eval_test/metric_results.json'
+    eval_stats: 'output/cat_dqn/DXA/CC14/configCC14-1_eval_test/evaluation_stats.pkl'
+  CC17:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc17/dxa_cc17_215_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc17/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc17/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc17/test_patients.zip'
+    eval_metrics: 'output/cat_dqn/DXA/CC17/configCC17-1_eval_test/metric_results.json'
+    eval_stats: 'output/cat_dqn/DXA/CC17/configCC17-1_eval_test/evaluation_stats.pkl'
+  CC21:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc21/dxa_cc21_175_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc21/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc21/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc21/test_patients.zip'
+    eval_metrics: 'output/cat_dqn/DXA/CC21/configCC21-1_eval_test/metric_results.json'
+    eval_stats: 'output/cat_dqn/DXA/CC21/configCC21-1_eval_test/evaluation_stats.pkl'
+  CC24:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc24/dxa_cc24_242_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc24/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc24/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc24/test_patients.zip'
+    eval_metrics: 'output/cat_dqn/DXA/CC24/configCC24-1_eval_test/metric_results.json'
+    eval_stats: 'output/cat_dqn/DXA/CC24/configCC24-1_eval_test/evaluation_stats.pkl'
+  CC7:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc7/dxa_cc7_295_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc7/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc7/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc7/test_patients.zip'
+    eval_metrics: 'output1/cat_dqn/DXA/CC7/configCC7-11_eval_test/metric_results.json'
+    eval_stats: 'output1/cat_dqn/DXA/CC7/configCC7-11_eval_test/evaluation_stats.pkl'
+  CC99:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc99/dxa_cc99_14_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc99/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc99/validate_patients.zip'
+    eval_metrics: 'output/cat_dqn/DXA/CC99/configCC99-1_eval_test/metric_results.json'
+    eval_stats: 'output/cat_dqn/DXA/CC99/configCC99-1_eval_test/evaluation_stats.pkl'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/cc99/test_patients.zip' 
+  all_patients:
+    symptom_file: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/extended_symptoms.json'
+    condition_file: 'output/conditions.json'
+    train_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/train_patients.zip'
+    validate_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/validate_patients.zip'
+    test_patients: 'chloe/data/dxa_data/DXA/dxa/min_10_travel_25/test_patients.zip'
+data_types:
+  - train_patients
+  - validate_patients
+  - test_patients
+metrics_to_plot:
+  - f1
+  - precision
+  - recall
+output_path: "chloe/plotting/"

@@ -1,0 +1,12 @@
+name: chloe
+engine: 0.23
+healthcheck:
+  path: /ping
+  liveness:
+    initialDelaySeconds: 15
+    timeoutSeconds: 15
+public: true
+environment:
+  GUNICORN_CMD_ARGS: "--timeout 60 -k gevent"
+scale:
+  vertical: large

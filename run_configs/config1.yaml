@@ -1,0 +1,202 @@
+# N-step returns (done)
+# Distributional state-action value learning  (done)
+# Dueling networks (done)
+# Noisy Networks (not present)
+# Double DQN  (done)
+# Prioritized Experience Replay  (done)
+#
+# multiple environments (because of the n-steps return for bootstraping)  (done)
+
+# updates_per_optimize = n_envs * replay_ratio / batch_size
+
+# general
+exp_name: MainResultConfig
+optimizer: adam
+architecture: mixed_cat_dqn_model
+perf_window_size: 10
+log_interval_steps: 200000
+n_steps: 100000000
+n_envs: 16
+max_decorrelation_steps: 400
+eval_n_envs: 0
+eval_max_steps: 4000
+eval_max_trajectories: 100
+runner: MinibatchRl
+sampler: GpuSampler
+algo: Mixed_CategoricalDQN
+agent: Mixed_CatDqnAgent
+
+# simulator params
+simulator_params:
+  symptom_filepath: ./data/release_evidences.json
+  condition_filepath: ./data/release_conditions.json
+  max_turns: 30
+  action_type: 0
+  include_turns_in_state: true
+  stop_if_repeated_question: false
+  include_race_in_state: false
+  include_ethnicity_in_state: false
+  is_reward_relevancy_patient_specific: true
+  use_differential_diagnosis: True
+  
+# reward config
+reward_config:
+  reward_on_repeated_action: 0
+  reward_on_missing_diagnosis: 0
+  reward_on_correct_diagnosis: 0
+  reward_on_intermediary_turns: -0.5
+  reward_on_relevant_symptom_inquiry: 2
+  reward_on_irrelevant_symptom_inquiry: 0.0
+
+# architecture params
+architecture_params:
+  input_size: 915
+  hidden_sizes: [4096, 2048, 2048]
+  output_size: 272
+  dueling: true
+  dueling_fc_sizes: [1024, 512]
+  pi_hidden_sizes: [1024, 512]
+  num_symptoms: 223
+  freeze_one_hot_encoding: true
+  embedding_dict:
+    "1": 8
+    "2": 2
+  not_inquired_value: 0
+  mask_inquired_symptoms: true
+  include_turns_in_state: true
+  use_turn_just_for_masking: false
+  min_turns_ratio_for_decision: null
+  use_stop_action: True
+  n_atoms: null
+
+
+
+# optimizer params
+optimizer_params: 
+  eps: 0.00015
+
+# sampler params
+sampler_params: {}
+
+# algo params
+algo_params:
+  V_min: -90
+  V_max: 70
+  discount: 0.99
+  batch_size: 512
+  replay_ratio: 32
+  replay_size: 4000000
+  learning_rate: 0.0000625
+  target_update_interval: 100
+  eps_steps: 4000000
+  n_step_return: 3
+  double_dqn: True
+  prioritized_replay: True
+  min_steps_learn: 500000
+  ReplayBufferCls: PrioritizedReplayBuffer
+  replay_intermediate_data_flag: true
+  separate_classifier_optimizer: true
+  pretrain_flag: false
+  pretrain_epochs: 100
+  pretrain_batch_size: 1000
+  pretrain_validation_percentage: 0.25
+  pretrain_perf_metric: null
+  pretrain_clf_learning_rate: 0.0001
+  pretrain_loss_func: cross_entropy
+  pretrain_loss_kwargs: {}
+  clf_learning_rate: null
+  reward_shaping_flag: true
+  reward_shaping_min: null
+  reward_shaping_max: null
+  env_reward_coef: 1.0
+  reward_shaping_coef: 1.0
+  reward_shaping_back_propagate_flag: false
+  reward_shaping_func: ce_ent_sent_reshaping
+  reward_shaping_kwargs:
+    max_turns: 30
+    min_map_val: -13.0
+    max_map_val: 13.0
+    ce_alpha: 4
+    ent_alpha: 9
+    js_alpha: 9
+    tv_alpha: 5
+    sev_in_alpha: -50
+    sev_out_alpha: -50
+    sev_f1_alpha: -50
+    sev_ent_alpha: 8
+    sev_ent_alpha_b: 0.5
+    ce_weight: 1
+    ent_weight: 0.0
+    js_weight: 12
+    tv_weight: 0.0
+    sev_in_weight: 0.0
+    # number of severe patho
+    sev_out_weight: 0.75
+    sev_f1_weight: 0.0
+    sev_ent_weight: 0.0
+    sev_tv_weight: 0.0
+    sev_js_weight: 0.0
+    reverse_ce_flag: False
+    reverse_flag: False
+    normalize_sev_dist: false
+    link_div_with_negative_evidence: false
+    bounds_dict:
+      js_min: 0
+      js_max: 0.25
+      ce_min: -2
+      ce_max: 2
+      # max 2 patho out gain
+      sev_out_min: -3.5
+      sev_out_max: 2
+  clf_reward_flag: true
+  clf_reward_min: null
+  clf_reward_max: null
+  clf_reward_coef: 1.0
+  clf_reward_func: sigmoid_modulated_cross_entropy_and_entropy_neg_reward
+  clf_reward_kwargs: 
+    max_turns: 30
+    ent_weight: 0.0
+    alpha: 50
+    initial_penalty: 0.0
+    ce_max_value: 30.0
+    ent_max_value: null
+    penalty_alpha: 50
+    use_severity_as_weight: false
+    sev_in_weight: 1.0
+    sev_out_weight: 0.0
+    sev_f1_weight: 0.0
+    reverse_entropy_reward_flag: False
+    reverse_reward_flag: True
+    ce_weight: 1.0
+    should_zero_centered_ce: True
+    exit_loss_coeff: 1.0
+  clf_loss_flag: true
+  clf_loss_complete_data_flag: false
+  # we can play with this
+  clf_loss_only_at_end_episode_flag: True
+  clf_loss_func: sigmoid_modulated_cross_entropy_and_entropy_loss
+  clf_loss_kwargs: 
+    max_turns: 30
+    ent_weight: 0.0
+    alpha: 50
+    use_severity_as_weight: false
+
+# agent params
+agent_params:
+  n_atoms: 51
+
+# runner params
+runner_params:
+  seed: 3834
+  topk: 5
+  eval_coeffs: [.5, .25, .15, .1]
+  traj_auxiliary_reward_flag: false
+
+# eval metrics
+eval_metrics: ['accuracy', 'f1', 'top-1-accuracy', 'top-2-accuracy', 'top-3-accuracy', 'top-5-accuracy']
+
+# performance metric, AvgPrecAggScore, top-1-accuracy, ExplConfAUCAggScore
+perf_metric: "AvgPrecAggScore"
+
+# early stopping
+patience: 81

@@ -1,0 +1,1429 @@
+{
+    "Pneumothorax spontan\u00e9": {
+        "condition_name": "Pneumothorax spontan\u00e9",
+        "cond-name-fr": "Pneumothorax spontan\u00e9",
+        "cond-name-eng": "Spontaneous pneumothorax",
+        "icd10-id": "J93",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "ww_respi": {},
+            "ww_effort": {},
+            "angor_repos": {},
+            "oedeme": {}
+        },
+        "antecedents": {
+            "f17.210": {},
+            "pneumothorax": {},
+            "ap_pneumothorax": {},
+            "j44_j42": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "C\u00e9phal\u00e9e en grappe": {
+        "condition_name": "C\u00e9phal\u00e9e en grappe",
+        "cond-name-fr": "C\u00e9phal\u00e9e en grappe",
+        "cond-name-eng": "Cluster headache",
+        "icd10-id": "g44.009",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "larmes": {},
+            "rhino_clair": {},
+            "rds_paralys_gen": {}
+        },
+        "antecedents": {
+            "atcd_cluster": {},
+            "f10.129": {},
+            "rx_vasodil": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Syndrome de Boerhaave": {
+        "condition_name": "Syndrome de Boerhaave",
+        "cond-name-fr": "Syndrome de Boerhaave",
+        "cond-name-eng": "Boerhaave",
+        "icd10-id": "K22.3",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "vo_sg": {},
+            "vo_violent": {},
+            "nausee": {}
+        },
+        "antecedents": {
+            "f10.129": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Fracture de c\u00f4te spontan\u00e9e": {
+        "condition_name": "Fracture de c\u00f4te spontan\u00e9e",
+        "cond-name-fr": "Fracture de c\u00f4te spontan\u00e9e",
+        "cond-name-eng": "Spontaneous rib fracture",
+        "icd10-id": "S22.9",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "ww_respi": {},
+            "ww_bouger": {},
+            "toux": {},
+            "oedeme": {},
+            "toux_sev": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "f10.129": {},
+            "cancer_m\u00e9ta": {},
+            "osteoporose": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "RGO": {
+        "condition_name": "RGO",
+        "cond-name-fr": "RGO",
+        "cond-name-eng": "GERD",
+        "icd10-id": "K21",
+        "symptoms": {
+            "pyrosis": {},
+            "toux": {},
+            "ww_bouffe": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "ww_dd": {},
+            "vo_sg": {},
+            "melena": {}
+        },
+        "antecedents": {
+            "e66": {},
+            "preg1": {},
+            "j45": {},
+            "f10.129": {},
+            "f17.210": {},
+            "hernie_hiatale": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "VIH (Primo-infection)": {
+        "condition_name": "VIH (Primo-infection)",
+        "cond-name-fr": "VIH (Primo-infection)",
+        "cond-name-eng": "HIV (initial infection)",
+        "icd10-id": "B20",
+        "symptoms": {
+            "fievre": {},
+            "fatig_ext": {},
+            "msk_dlr": {},
+            "perte_poids": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "gorge_dlr": {},
+            "adp_dlr": {},
+            "diarrhee": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "nausee": {},
+            "diaph": {}
+        },
+        "antecedents": {
+            "itss_risque": {},
+            "drogues_IV": {},
+            "atcd_its": {},
+            "sex_vih": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "An\u00e9mie": {
+        "condition_name": "An\u00e9mie",
+        "cond-name-fr": "An\u00e9mie",
+        "cond-name-eng": "Anemia",
+        "icd10-id": "D64.9",
+        "symptoms": {
+            "etourdissement": {},
+            "fatig_mod": {},
+            "fatig_ext": {},
+            "dyspn": {},
+            "pale": {},
+            "faible": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "rectorragie": {},
+            "melena": {},
+            "m\u00e9norr": {}
+        },
+        "antecedents": {
+            "Mauv_aliment": {},
+            "atcd_anem": {},
+            "atcd_fam_anem": {},
+            "preg1": {},
+            "irc": {},
+            "v85.0": {},
+            "naco": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Pharyngite virale": {
+        "condition_name": "Pharyngite virale",
+        "cond-name-fr": "Pharyngite virale",
+        "cond-name-eng": "Viral pharyngitis",
+        "icd10-id": "J02.9",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "rhino_clair": {},
+            "fievre": {},
+            "toux": {},
+            "crach_sg": {}
+        },
+        "antecedents": {
+            "dayc": {},
+            "crowd": {},
+            "f17.210": {},
+            "contact": {},
+            "z92.25": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Hernie inguinale": {
+        "condition_name": "Hernie inguinale",
+        "cond-name-fr": "Hernie inguinale",
+        "cond-name-eng": "Inguinal hernia",
+        "icd10-id": "K40",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "ballon_abdo": {},
+            "toux_sev": {},
+            "ww_valsalva": {},
+            "obstipation": {}
+        },
+        "antecedents": {
+            "perinatality": {},
+            "e66": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Myasth\u00e9nie grave": {
+        "condition_name": "Myasth\u00e9nie grave",
+        "cond-name-fr": "Myasth\u00e9nie grave",
+        "cond-name-eng": "Myasthenia gravis",
+        "icd10-id": "G70.0",
+        "symptoms": {
+            "dysphagie": {},
+            "dysarthrie": {},
+            "diplopie": {},
+            "ptose": {},
+            "faiblesse_msmi": {},
+            "dyspn": {},
+            "fatigabilit\u00e9_msk": {},
+            "claud_m\u00e2choire": {},
+            "rds_paralys_gen": {}
+        },
+        "antecedents": {
+            "atcdfam_mg": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Coqueluche": {
+        "condition_name": "Coqueluche",
+        "cond-name-fr": "Coqueluche",
+        "cond-name-eng": "Whooping cough",
+        "icd10-id": "A37",
+        "symptoms": {
+            "posttus_emesis": {},
+            "toux_sev": {},
+            "insp_siffla": {}
+        },
+        "antecedents": {
+            "cont_coq": {},
+            "j45": {},
+            "e66": {},
+            "vaccination": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Anaphylaxie": {
+        "condition_name": "Anaphylaxie",
+        "cond-name-fr": "Anaphylaxie",
+        "cond-name-eng": "Anaphylaxis",
+        "icd10-id": "T78.0",
+        "symptoms": {
+            "contact_allergie": {},
+            "faible": {},
+            "pdc": {},
+            "dyspn": {},
+            "wheez": {},
+            "stridor": {},
+            "oedeme_endroitducorps": {},
+            "oedeme": {},
+            "diarrhee": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "nausee": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {}
+        },
+        "antecedents": {
+            "z84.89": {},
+            "allergie_sev": {},
+            "trav1": {}
+        },
+        "severity": 1
+    },
+    "\u00c9piglottite": {
+        "condition_name": "\u00c9piglottite",
+        "cond-name-fr": "\u00c9piglottite",
+        "cond-name-eng": "Epiglottitis",
+        "icd10-id": "J05.1",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "fievre": {},
+            "sialorhee": {},
+            "bw_bending": {},
+            "dysphagie": {},
+            "volume_parole": {},
+            "dyspn": {},
+            "stridor": {}
+        },
+        "antecedents": {
+            "i10": {},
+            "e10_e11": {},
+            "vaccination": {},
+            "f10.129": {},
+            "drogues_stimul": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Syndrome de Guillain-Barr\u00e9": {
+        "condition_name": "Syndrome de Guillain-Barr\u00e9",
+        "cond-name-fr": "Syndrome de Guillain-Barr\u00e9",
+        "cond-name-eng": "Guillain-Barr\u00e9 syndrome",
+        "icd10-id": "G61.0",
+        "symptoms": {
+            "faiblesse_msmi": {},
+            "dyspn": {},
+            "faiblesse faciale": {},
+            "paresthesies_bilat": {},
+            "footnumb": {},
+            "paralysie_visage": {},
+            "rds_paralys_gen": {},
+            "rds_paresthesie_gen": {}
+        },
+        "antecedents": {
+            "B34.9": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Laryngite aigue": {
+        "condition_name": "Laryngite aigue",
+        "cond-name-fr": "Laryngite aigue",
+        "cond-name-eng": "Acute laryngitis",
+        "icd10-id": "J04.0",
+        "symptoms": {
+            "volume_parole": {},
+            "fievre": {},
+            "toux": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {}
+        },
+        "antecedents": {
+            "j06.9": {},
+            "crowd": {},
+            "dayc": {},
+            "f17.210": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Laryngo-trach\u00e9o-bronchite (Croup)": {
+        "condition_name": "Laryngo-trach\u00e9o-bronchite (Croup)",
+        "cond-name-fr": "Laryngo-trach\u00e9o-bronchite (Croup)",
+        "cond-name-eng": "Croup",
+        "icd10-id": "J05.0",
+        "symptoms": {
+            "stridor": {},
+            "fievre": {},
+            "rhino_clair": {},
+            "toux_Aboy": {},
+            "dyspn": {},
+            "ww_nuit": {},
+            "sialorhee": {}
+        },
+        "antecedents": {
+            "J05.0": {},
+            "vaccination": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "TSVP": {
+        "condition_name": "TSVP",
+        "cond-name-fr": "TSVP",
+        "cond-name-eng": "PSVT",
+        "icd10-id": "I47.1",
+        "symptoms": {
+            "palpit": {},
+            "etourdissement": {},
+            "dyspn": {},
+            "faible": {},
+            "anxiete_s": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {}
+        },
+        "antecedents": {
+            "drogues_stimul": {},
+            "drink_energie": {},
+            "cafe": {},
+            "wakeup": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Fibrillation auriculaire/Flutter auriculaire": {
+        "condition_name": "Fibrillation auriculaire/Flutter auriculaire",
+        "cond-name-fr": "Fibrillation auriculaire/Flutter auriculaire",
+        "cond-name-eng": "Atrial fibrillation",
+        "icd10-id": "I48.91",
+        "symptoms": {
+            "palpit": {},
+            "dyspn": {},
+            "etourdissement": {},
+            "ww_effort": {},
+            "pls_irreg": {}
+        },
+        "antecedents": {
+            "malf_cardiaque": {},
+            "ap_hypert4": {},
+            "i10": {},
+            "i25.1": {},
+            "e10_e11": {},
+            "bode": {},
+            "e66": {},
+            "ap_valve": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Bronchiectasies": {
+        "condition_name": "Bronchiectasies",
+        "cond-name-fr": "Bronchiectasies",
+        "cond-name-eng": "Bronchiectasis",
+        "icd10-id": "J47",
+        "symptoms": {
+            "toux": {},
+            "expecto": {},
+            "crach_sg": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "ap_asian": {},
+            "ap_fk": {},
+            "j17_j18": {},
+            "crohn_cu": {},
+            "ap_par": {},
+            "z92.25": {},
+            "j45": {},
+            "j44_j42": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Rhinite allergique": {
+        "condition_name": "Rhinite allergique",
+        "cond-name-fr": "Rhinite allergique",
+        "cond-name-eng": "Allergic sinusitis",
+        "icd10-id": "J30",
+        "symptoms": {
+            "toux": {},
+            "rhino_clair": {},
+            "prurit_occ": {},
+            "prurit_nasal": {}
+        },
+        "antecedents": {
+            "z84.89": {},
+            "urban1": {},
+            "fam_atopie": {},
+            "fam_j45": {},
+            "j45": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Chagas": {
+        "condition_name": "Chagas",
+        "cond-name-fr": "Chagas",
+        "cond-name-eng": "Chagas",
+        "icd10-id": "B57",
+        "symptoms": {
+            "fievre": {},
+            "rds_deg": {},
+            "rds_anorexie": {},
+            "nausee": {},
+            "diarrhee": {},
+            "adp_dlr": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "oedeme_endroitducorps": {},
+            "oedeme": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Scombro\u00efde": {
+        "condition_name": "Scombro\u00efde",
+        "cond-name-fr": "Scombro\u00efde",
+        "cond-name-eng": "Scombroid food poisoning",
+        "icd10-id": "T61.1",
+        "symptoms": {
+            "faible": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "diarrhee": {},
+            "nausee": {},
+            "dyspn": {},
+            "flushing": {},
+            "wheez": {},
+            "palpit": {}
+        },
+        "antecedents": {
+            "scombroide": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Myocardite": {
+        "condition_name": "Myocardite",
+        "cond-name-fr": "Myocardite",
+        "cond-name-eng": "Myocarditis",
+        "icd10-id": "I51.4",
+        "symptoms": {
+            "rds_deg": {},
+            "palpit": {},
+            "dyspn": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "irritable": {},
+            "dysp_effort": {},
+            "ww_dd": {},
+            "ww_effort": {}
+        },
+        "antecedents": {
+            "B34.9": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Laryngospasme": {
+        "condition_name": "Laryngospasme",
+        "cond-name-fr": "Laryngospasme",
+        "cond-name-eng": "Larygospasm",
+        "icd10-id": "J38.5",
+        "symptoms": {
+            "stridor": {}
+        },
+        "antecedents": {
+            "j45": {},
+            "j06.9": {},
+            "f17.210": {},
+            "z77.22": {},
+            "k21": {},
+            "trav1": {}
+        },
+        "severity": 1
+    },
+    "R\u00e9action dystonique a\u00efgue": {
+        "condition_name": "R\u00e9action dystonique a\u00efgue",
+        "cond-name-fr": "R\u00e9action dystonique a\u00efgue",
+        "cond-name-eng": "Acute dystonic reactions",
+        "icd10-id": "G24.02",
+        "symptoms": {
+            "laryngospasme": {},
+            "spasmes_msk": {},
+            "trismus": {},
+            "spasme_trapeze": {},
+            "protu_langue": {},
+            "dyspn": {},
+            "ptose": {},
+            "regard_d\u00e9vi\u00e9": {}
+        },
+        "antecedents": {
+            "drogues_stimul": {},
+            "antipsy_r\u00e9cent": {},
+            "nau_psy_recent": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Oed\u00e8me localis\u00e9 ou g\u00e9n\u00e9ralis\u00e9 sans atteinte pulmonaire associ\u00e9e": {
+        "condition_name": "Oed\u00e8me localis\u00e9 ou g\u00e9n\u00e9ralis\u00e9 sans atteinte pulmonaire associ\u00e9e",
+        "cond-name-fr": "Oed\u00e8me localis\u00e9 ou g\u00e9n\u00e9ralis\u00e9 sans atteinte pulmonaire associ\u00e9e",
+        "cond-name-eng": "Localized edema",
+        "icd10-id": "R60.0",
+        "symptoms": {
+            "dyspn": {},
+            "oedeme_endroitducorps": {},
+            "oedeme": {},
+            "ww_dd": {},
+            "dyspn_noct": {},
+            "gain_poids": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {}
+        },
+        "antecedents": {
+            "lymphoed\u00e8me": {},
+            "patho_endo": {},
+            "i80": {},
+            "norvasc": {},
+            "cortico": {},
+            "synd_nephro": {},
+            "k74": {},
+            "i50": {},
+            "ap_valve": {},
+            "sahs": {},
+            "ains": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Lupus \u00e9ryth\u00e9mateux diss\u00e9min\u00e9 (LED)": {
+        "condition_name": "Lupus \u00e9ryth\u00e9mateux diss\u00e9min\u00e9 (LED)",
+        "cond-name-fr": "Lupus \u00e9ryth\u00e9mateux diss\u00e9min\u00e9 (LED)",
+        "cond-name-eng": "SLE",
+        "icd10-id": "M34",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "dyspn": {},
+            "ulc\u00e8res_bouche": {},
+            "fatig_mod": {},
+            "oedeme": {}
+        },
+        "antecedents": {
+            "f17.210": {},
+            "menarche_hat": {},
+            "allait_prol": {},
+            "I30": {},
+            "hta": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Tuberculose": {
+        "condition_name": "Tuberculose",
+        "cond-name-fr": "Tuberculose",
+        "cond-name-eng": "Tuberculosis",
+        "icd10-id": "a15",
+        "symptoms": {
+            "toux": {},
+            "crach_sg": {},
+            "dyspn": {},
+            "fievre": {},
+            "perte_poids": {}
+        },
+        "antecedents": {
+            "f10.129": {},
+            "drogues_IV": {},
+            "HIV": {},
+            "cortico": {},
+            "e10_e11": {},
+            "v85.0": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Angine instable": {
+        "condition_name": "Angine instable",
+        "cond-name-fr": "Angine instable",
+        "cond-name-eng": "Unstable angina",
+        "icd10-id": "I20.0",
+        "symptoms": {
+            "ww_effort": {},
+            "angor_accelere": {},
+            "angor_repos": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "fatig_mod": {},
+            "nausee": {},
+            "diaph": {}
+        },
+        "antecedents": {
+            "e10_e11": {},
+            "i10": {},
+            "f17.210": {},
+            "e66": {},
+            "e78.5": {},
+            "f10.129": {},
+            "move": {},
+            "z82.49": {},
+            "i25.1": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Angine stable": {
+        "condition_name": "Angine stable",
+        "cond-name-fr": "Angine stable",
+        "cond-name-eng": "Stable angina",
+        "icd10-id": "I20.9",
+        "symptoms": {
+            "ww_effort": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "fatig_mod": {}
+        },
+        "antecedents": {
+            "i25.1": {},
+            "e10_e11": {},
+            "i10": {},
+            "f17.210": {},
+            "e66": {},
+            "e78.5": {},
+            "f10.129": {},
+            "move": {},
+            "z82.49": {},
+            "trav1": {}
+        },
+        "severity": 2
+    },
+    "Ebola": {
+        "condition_name": "Ebola",
+        "cond-name-fr": "Ebola",
+        "cond-name-eng": "Ebola",
+        "icd10-id": "a98.4",
+        "symptoms": {
+            "rds_sg": {},
+            "fievre": {},
+            "nausee": {},
+            "diarrhee": {},
+            "confusion": {},
+            "toux": {},
+            "msk_dlr": {},
+            "fatig_mod": {},
+            "dyspn": {},
+            "gorge_dlr": {}
+        },
+        "antecedents": {
+            "contact": {},
+            "trav1": {},
+            "ebolacase": {}
+        },
+        "severity": 1
+    },
+    "Otite moyenne aigue (OMA)": {
+        "condition_name": "Otite moyenne aigue (OMA)",
+        "cond-name-fr": "Otite moyenne aigue (OMA)",
+        "cond-name-eng": "Acute otitis media",
+        "icd10-id": "H66.90",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "fievre": {},
+            "rhino_clair": {},
+            "toux": {},
+            "irritable": {}
+        },
+        "antecedents": {
+            "H6690": {},
+            "vaccination": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Attaque de panique": {
+        "condition_name": "Attaque de panique",
+        "cond-name-fr": "Attaque de panique",
+        "cond-name-eng": "Panic attack",
+        "icd10-id": "f41",
+        "symptoms": {
+            "palpit": {},
+            "etouff": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "anxiete_s": {},
+            "rds_paresthesie_gen": {},
+            "diaph": {},
+            "dyspn": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "nausee": {},
+            "faible": {},
+            "psy_depers": {},
+            "paresthesies_bilat": {},
+            "impression_mort": {}
+        },
+        "antecedents": {
+            "f41.9": {},
+            "f32": {},
+            "f10.129": {},
+            "atcdpsyfam": {},
+            "s09.90": {},
+            "j45": {},
+            "histfammigraine": {},
+            "m79.7": {},
+            "trav1": {}
+        },
+        "severity": 5
+    },
+    "Asthme exacerb\u00e9 ou bronchospasme": {
+        "condition_name": "Asthme exacerb\u00e9 ou bronchospasme",
+        "cond-name-fr": "Asthme exacerb\u00e9 ou bronchospasme",
+        "cond-name-eng": "Bronchospasm / acute asthma exacerbation",
+        "icd10-id": "J45",
+        "symptoms": {
+            "toux": {},
+            "dyspn": {},
+            "wheez": {}
+        },
+        "antecedents": {
+            "j06.9": {},
+            "urban1": {},
+            "fam_j45": {},
+            "z77.22": {},
+            "j45": {},
+            "hosptisasm": {},
+            "criseasthm": {},
+            "z84.89": {},
+            "j32": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Bronchite": {
+        "condition_name": "Bronchite",
+        "cond-name-fr": "Bronchite",
+        "cond-name-eng": "Bronchitis",
+        "icd10-id": "j40",
+        "symptoms": {
+            "ww_nuit": {},
+            "toux": {},
+            "gorge_dlr": {},
+            "rhino_clair": {},
+            "expecto": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "wheez": {},
+            "fievre": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "vaccination": {},
+            "f17.210": {},
+            "j44_j42": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Exacerbation aigue de MPOC et/ou surinfection associ\u00e9e": {
+        "condition_name": "Exacerbation aigue de MPOC et/ou surinfection associ\u00e9e",
+        "cond-name-fr": "Exacerbation aigue de MPOC et/ou surinfection associ\u00e9e",
+        "cond-name-eng": "Acute COPD exacerbation / infection",
+        "icd10-id": "j44.1",
+        "symptoms": {
+            "toux": {},
+            "wheez": {},
+            "expecto": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "k21": {},
+            "f17.210": {},
+            "j44_j42": {},
+            "eampoc1": {},
+            "tagri": {},
+            "tmine": {},
+            "tconst": {},
+            "bode": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Embolie pulmonaire": {
+        "condition_name": "Embolie pulmonaire",
+        "cond-name-fr": "Embolie pulmonaire",
+        "cond-name-eng": "Pulmonary embolism",
+        "icd10-id": "i26",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "oedeme_endroitducorps": {},
+            "oedeme": {},
+            "pdc": {},
+            "crach_sg": {},
+            "ww_respi": {},
+            "dyspn": {}
+        },
+        "antecedents": {
+            "c00-d48": {},
+            "i80": {},
+            "surg1": {},
+            "immob1": {},
+            "trav1": {},
+            "horm1": {}
+        },
+        "severity": 2
+    },
+    "IVRS ou vir\u00e9mie": {
+        "condition_name": "IVRS ou vir\u00e9mie",
+        "cond-name-fr": "IVRS ou vir\u00e9mie",
+        "cond-name-eng": "URTI",
+        "icd10-id": "j06.9",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "toux": {},
+            "diaph": {},
+            "rhino_clair": {},
+            "gorge_dlr": {},
+            "msk_dlr": {},
+            "fievre": {},
+            "expecto": {}
+        },
+        "antecedents": {
+            "crowd": {},
+            "z77.22": {},
+            "dayc": {},
+            "contact": {},
+            "f17.210": {},
+            "trav1": {}
+        },
+        "severity": 5
+    },
+    "Possible influenza ou syndrome vir\u00e9mique typique": {
+        "condition_name": "Possible influenza ou syndrome vir\u00e9mique typique",
+        "cond-name-fr": "Possible influenza ou syndrome vir\u00e9mique typique",
+        "cond-name-eng": "Influenza",
+        "icd10-id": "j11.1",
+        "symptoms": {
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "perte_appet": {},
+            "friss": {},
+            "fievre": {},
+            "diaph": {},
+            "toux": {},
+            "fatig_ext": {},
+            "rhino_clair": {},
+            "gorge_dlr": {},
+            "msk_dlr": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {}
+        },
+        "antecedents": {
+            "f17.210": {},
+            "z92.25": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Pneumonie": {
+        "condition_name": "Pneumonie",
+        "cond-name-fr": "Pneumonie",
+        "cond-name-eng": "Pneumonia",
+        "icd10-id": "j17, j18",
+        "symptoms": {
+            "ww_respi": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "crach_sg": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "rds_deg": {},
+            "perte_appet": {},
+            "ww_nuit": {},
+            "fievre": {},
+            "expecto": {},
+            "toux": {},
+            "dyspn": {},
+            "friss": {},
+            "msk_dlr": {},
+            "rhino_clair": {}
+        },
+        "antecedents": {
+            "vaccination": {},
+            "surg1": {},
+            "j44_j42": {},
+            "j45": {},
+            "i50": {},
+            "i60-i69": {},
+            "g20": {},
+            "f17.210": {},
+            "f10.129": {},
+            "v85.0": {},
+            "j17_j18": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Rhinosinusite aigue": {
+        "condition_name": "Rhinosinusite aigue",
+        "cond-name-fr": "Rhinosinusite aigue",
+        "cond-name-eng": "Acute rhinosinusitis",
+        "icd10-id": "j01",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "rhino_pur": {},
+            "toux": {},
+            "hyponos": {},
+            "fievre": {},
+            "rhino_clair": {}
+        },
+        "antecedents": {
+            "vaccination": {},
+            "j34.2": {},
+            "f17.210": {},
+            "k21": {},
+            "j17_j18": {},
+            "z84.89": {},
+            "j45": {},
+            "j33": {},
+            "j06.9": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "Rhinosinusite chronique": {
+        "condition_name": "Rhinosinusite chronique",
+        "cond-name-fr": "Rhinosinusite chronique",
+        "cond-name-eng": "Chronic rhinosinusitis",
+        "icd10-id": "j32",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "rhino_pur": {},
+            "toux": {},
+            "hyponos": {},
+            "rhino_clair": {}
+        },
+        "antecedents": {
+            "j06.9": {},
+            "j34.2": {},
+            "f17.210": {},
+            "k21": {},
+            "j17_j18": {},
+            "z84.89": {},
+            "j45": {},
+            "j33": {},
+            "trav1": {}
+        },
+        "severity": 5
+    },
+    "Bronchiolite": {
+        "condition_name": "Bronchiolite",
+        "cond-name-fr": "Bronchiolite",
+        "cond-name-eng": "Bronchiolitis",
+        "icd10-id": "j21",
+        "symptoms": {
+            "toux": {},
+            "dyspn": {},
+            "boire_ped": {},
+            "rhino_clair": {},
+            "fievre": {},
+            "wheez": {},
+            "apnee": {}
+        },
+        "antecedents": {
+            "vaccination": {},
+            "momasthma": {},
+            "crowd": {},
+            "suburb": {},
+            "rural": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "n\u00e9oplasie pulmonaire": {
+        "condition_name": "n\u00e9oplasie pulmonaire",
+        "cond-name-fr": "n\u00e9oplasie pulmonaire",
+        "cond-name-eng": "Pulmonary neoplasm",
+        "icd10-id": "c34",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "crach_sg": {},
+            "perte_poids": {},
+            "perte_appet": {},
+            "dyspn": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "fatig_mod": {},
+            "toux": {}
+        },
+        "antecedents": {
+            "smokingpast": {},
+            "f17.210": {},
+            "z80.1": {},
+            "z77.22": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "Possible NSTEMI / STEMI": {
+        "condition_name": "Possible NSTEMI / STEMI",
+        "cond-name-fr": "Possible NSTEMI / STEMI",
+        "cond-name-eng": "Possible NSTEMI / STEMI",
+        "icd10-id": "I21",
+        "symptoms": {
+            "perte_appet": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "fatig_mod": {},
+            "nausee": {},
+            "diaph": {}
+        },
+        "antecedents": {
+            "i25.1": {},
+            "i73.9": {},
+            "smokingpast": {},
+            "f17.210": {},
+            "i10": {},
+            "e10_e11": {},
+            "e78.5": {},
+            "HIV": {},
+            "e66": {},
+            "z82.49": {},
+            "trav1": {}
+        },
+        "severity": 1
+    },
+    "Sarco\u00efdose": {
+        "condition_name": "Sarco\u00efdose",
+        "cond-name-fr": "Sarco\u00efdose",
+        "cond-name-eng": "Sarcoidosis",
+        "icd10-id": "d86",
+        "symptoms": {
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "erytheme_occ": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "convulsion": {},
+            "adp_dlr": {},
+            "dyspn": {},
+            "pertes_vag": {}
+        },
+        "antecedents": {
+            "e66": {},
+            "tagri": {},
+            "trav1": {}
+        },
+        "severity": 4
+    },
+    "N\u00e9oplasie du pancr\u00e9as": {
+        "condition_name": "N\u00e9oplasie du pancr\u00e9as",
+        "cond-name-fr": "N\u00e9oplasie du pancr\u00e9as",
+        "cond-name-eng": "Pancreatic neoplasm",
+        "icd10-id": "c25",
+        "symptoms": {
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "lesions_peau_endroitducorps": {},
+            "lesions_peau": {},
+            "lesions_peau_couleur": {},
+            "lesions_peau_intens": {},
+            "lesions_peau_elevee": {},
+            "lesions_peau_prurit": {},
+            "lesions_peau_plusqu1cm": {},
+            "lesions_peau_desquame": {},
+            "diarrhee": {},
+            "fatig_mod": {},
+            "toux": {},
+            "selles_pale": {},
+            "nausee": {},
+            "perte_poids": {}
+        },
+        "antecedents": {
+            "e10_e11": {},
+            "f17.210": {},
+            "e66": {},
+            "z80.0": {},
+            "K86.1": {},
+            "trav1": {}
+        },
+        "severity": 3
+    },
+    "OAP/Surcharge pulmonaire": {
+        "condition_name": "OAP/Surcharge pulmonaire",
+        "cond-name-fr": "OAP/Surcharge pulmonaire",
+        "cond-name-eng": "Acute pulmonary edema",
+        "icd10-id": "J81.0",
+        "symptoms": {
+            "ww_effort": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "oedeme_endroitducorps": {},
+            "oedeme": {},
+            "rds_deg": {},
+            "diaph": {},
+            "dyspn": {},
+            "dyspn_noct": {},
+            "ww_dd": {}
+        },
+        "antecedents": {
+            "i25.1": {},
+            "i50": {},
+            "J81": {},
+            "i10": {},
+            "Z99.2": {},
+            "trav1": {}
+        },
+        "severity": 1
+    },
+    "P\u00e9ricardite": {
+        "condition_name": "P\u00e9ricardite",
+        "cond-name-fr": "P\u00e9ricardite",
+        "cond-name-eng": "Pericarditis",
+        "icd10-id": "I30",
+        "symptoms": {
+            "ww_respi": {},
+            "ww_dd": {},
+            "douleurxx_endroitducorps": {},
+            "douleurxx": {},
+            "douleurxx_irrad": {},
+            "douleurxx_carac": {},
+            "douleurxx_soudain": {},
+            "douleurxx_intens": {},
+            "douleurxx_precis": {},
+            "dyspn": {},
+            "palpit": {}
+        },
+        "antecedents": {
+            "B34.9": {},
+            "I30": {},
+            "trav1": {}
+        },
+        "severity": 4
+    }
+}
