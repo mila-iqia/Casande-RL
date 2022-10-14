@@ -1,5 +1,7 @@
 # Casande
 
+This is the repository containing the codebase of the CASANDE agent as well as the baselines introduced in the paper [Towards Trustworthy Automatic Diagnosis Systems by Emulating Doctors' Reasoning with Deep Reinforcement Learning](https://arxiv.org/abs/2210.07198) published at NeurIPS 2022.
+
 ## Introduction
 
 Implementation of an RL-based medical conversational agent. The agent uses deep Q-learning based Rainbow to learn to interact with a patient and it inquires about potential symptoms and antecedents that the patient may be suffering from. The agent produces a distribution over possible pathologies at the end of interaction.
