@@ -48,7 +48,7 @@ pip install -r requirement.txt
 
    - [Synthetic dataset](http://www.sdspeople.fudan.edu.cn/zywei/data/Fudan-Medical-Dialogue2.0)
 
-   - [DDXPlus dataset](https://drive.google.com/drive/folders/17OmDYlVS9HdIzqPLEh_JwVz0IEQLHLVu) 
+   - [DDXPlus dataset](https://figshare.com/articles/dataset/DDXPlus_Dataset/20043374) 
 
 2. **Build data**
 
