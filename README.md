@@ -31,6 +31,7 @@ For a quick walk-thorugh on how to get started, skip to [Installation](#installa
 ├── data
 ├── run_configs
 ├── scripts
+├── notebooks
 ├── tests
 ├── Dockerfile
 ├── LICENCE
@@ -193,3 +194,7 @@ We used the `AUCTraj` metric as a proxy to quantify the quality of a trajectory 
 The resulting metrics are located in `./ouput/config1/run_0/best_eval/BatchMetrics.json`.
 
 Please note that the `DSHM` metric used in the paper is called `DSF1` in the code.
+
+## Printing Interactions
+
+The folder [`notebooks`](notebooks/) contains a notebook which illustrates how to write down the trajectories followed by a given agent when interacting with a patient as well as wirting down the patient.
