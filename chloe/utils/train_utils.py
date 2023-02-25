@@ -13,19 +13,7 @@ from orion.client import report_results
 from rlpyt.samplers.collections import TrajInfo
 from rlpyt.utils.logging import logger
 
-from chloe.utils.dist_metric import (
-    dist_accuracy,
-    dist_js_div,
-    dist_ncg,
-    dist_ndcg,
-    kl_confirm_score,
-    kl_explore_score,
-    kl_trajectory_auc,
-    numpy_get_severe_pathos_inout_ratio,
-    numpy_softmax,
-)
 from chloe.utils.runner_utils import EarlyStoppingError, PerformanceMixin
-from chloe.utils.tensor_utils import _clamp_utils, _negate_tensor
 
 RUN_ID_FILE_NAME = "exp_run_id.json"
 
@@ -60,43 +48,21 @@ class SimPaTrajInfo(TrajInfo):
         self.PrecisionRelevantAntecedents = 0
         self.RecallRelevantSymptoms = 0
         self.RecallRelevantAntecedents = 0
-        self.AvgInfoGainOnIrrelevancy = 0
-        self.NdcgDistPred = 0
-        self.NdcgBasedAggScore = 0
-        self.NcgDistPred = 0
-        self.NcgBasedAggScore = 0
-        self.AvgPrecDistPred = 0
-        self.AvgPrecAggScore = 0
-        self.AvgPrecFullDistPred = 0
-        self.AvgPrecFullAggScore = 0
-        self.ExplConfAUC = 0
-        self.ExplConfSortedAUC = 0
-        self.ExplConfAUCAggScore = 0
-        self.ExplConfSortedAUCAggScore = 0
-        self.SevOut = 0
-        self.SevIn = 0
-        self.SevF1 = 0
+
+        self._prev_dist_info = None
+        self._dist_info = None
+
         self._num_experienced_symptoms = 0
         self._num_experienced_antecedents = 0
         self._num_evidences = 0
         self._metric_y_true = 0
-        self._tensor_y_true = None
         self._metric_diffential_indices = None
-        self._tensor_diffential_indices = None
         self._metric_diffential_probas = None
-        self._tensor_diffential_probas = None
         self._metric_evidence = None
-        self._tensor_evidence = None
         self._metric_y_pred = 0
         self._sim_severity = 0
         self._sim_timestep = 0
-        self._tensor_sim_timestep = None
-        self._first_dist_info = None
-        self._prev_dist_info = None
-        self._dist_info = None
-        self._kl_explore = []
-        self._kl_confirm = []
-        self._info_gain_on_irrelevancy = 0
+
         self._num_irrelevancy = 0
         self._num_evidenced_inquiries = 0
         self._sim_age = -1
@@ -134,214 +100,6 @@ class SimPaTrajInfo(TrajInfo):
             getattr(self, "Discounted" + key, 0.0) + (cur_discount * val),
         )
 
-    def _define_tensors(self):
-        """Defines the tensors for computing auxiliary rewards (reward shaping).
-        """
-        with torch.no_grad():
-            if self._tensor_y_true is None:
-                self._tensor_y_true = torch.tensor([self._metric_y_true])
-            if self._tensor_sim_timestep is None:
-                self._tensor_sim_timestep = torch.tensor([self._sim_timestep])
-            else:
-                self._tensor_sim_timestep += 1
-            if (
-                self._tensor_diffential_indices is None
-                and self._metric_diffential_indices is not None
-            ):
-                self._tensor_diffential_indices = torch.from_numpy(
-                    self._metric_diffential_indices
-                ).unsqueeze(0)
-            if (
-                self._tensor_diffential_probas is None
-                and self._metric_diffential_probas is not None
-            ):
-                self._tensor_diffential_probas = torch.from_numpy(
-                    self._metric_diffential_probas
-                ).unsqueeze(0)
-            self._tensor_evidence = torch.tensor([self._metric_evidence])
-
-    def _compute_reward_shaping(self, cur_discount):
-        """Computes the intermediate auxiliary reward at each step of the episode.
-
-        Parameters
-        ----------
-        cur_discount: float
-            the current value of the discount factor at the update step.
-
-        Returns
-        -------
-        result: float
-            the computed reward.
-
-        """
-        reward_shaping_flag = self._aux_reward_info.get("reward_shaping_flag", False)
-        coef = self._aux_reward_info.get("reward_shaping_coef", 1.0)
-        aux_rs = 0.0
-        aux_dict = {}
-        result = 0.0
-        keys = getattr(SimPaTrajInfo, "_aux_rs_keys", [])
-        if reward_shaping_flag and (self._prev_dist_info is not None) and (coef != 0):
-            with torch.no_grad():
-                dist_info = (
-                    torch.from_numpy(self._dist_info)
-                    if isinstance(self._dist_info, np.ndarray)
-                    else self._dist_info
-                )
-                prev_dist_info = (
-                    torch.from_numpy(self._prev_dist_info)
-                    if isinstance(self._prev_dist_info, np.ndarray)
-                    else self._prev_dist_info
-                )
-                aux_rs, aux_dict = self._aux_reward_info[
-                    "reward_shaping_factory"
-                ].evaluate(
-                    self._aux_reward_info["reward_shaping_func"],
-                    dist_info.unsqueeze(0),
-                    prev_dist_info.unsqueeze(0),
-                    self._tensor_y_true,
-                    self._tensor_diffential_indices,
-                    self._tensor_diffential_probas,
-                    self._tensor_evidence,
-                    self._discount,
-                    self._aux_reward_info["patho_severity"],
-                    self._tensor_sim_timestep,
-                    **self._aux_reward_info["reward_shaping_kwargs"],
-                )
-                aux_rs = _clamp_utils(
-                    aux_rs,
-                    self._aux_reward_info["reward_shaping_min"],
-                    self._aux_reward_info["reward_shaping_max"],
-                ).item()
-
-                if aux_dict is None:
-                    aux_dict = {}
-                for k in aux_dict.keys():
-                    aux_dict[k] = (
-                        aux_dict[k].item()
-                        if isinstance(aux_dict[k], torch.Tensor)
-                        else aux_dict[k]
-                    )
-
-                aux_rs_keys = [""] + list(aux_dict.keys())
-                diff = set(aux_rs_keys) - set(keys)
-                if diff:
-                    keys += list(diff)
-                    setattr(SimPaTrajInfo, "_aux_rs_keys", keys)
-
-                result = coef * aux_rs
-
-        for k in keys:
-            val = aux_rs if k == "" else aux_dict.get(k, 0.0)
-            # saving
-            self._update_attr_key("Auxiliary" + k + "Return", coef * val, cur_discount)
-
-        return result
-
-    def _compute_clf_reward(self, cur_discount, done):
-        """Computes the classifier auxiliary reward at the end of the episode.
-
-        Parameters
-        ----------
-        cur_discount: float
-            the current value of the discount factor at the update step.
-        done: bool
-            a flag indicating the end of the episode.
-
-        Returns
-        -------
-        result: float
-            the computed reward.
-
-        """
-        clf_reward_flag = self._aux_reward_info.get("clf_reward_flag", False)
-        coef = self._aux_reward_info.get("clf_reward_coef", 1.0)
-        clf_rs = 0.0
-        clf_dict = {}
-        result = 0.0
-        keys = getattr(SimPaTrajInfo, "_clf_rs_keys", [])
-        if clf_reward_flag and done and (coef != 0) and (self._dist_info is not None):
-            with torch.no_grad():
-                dist_info = (
-                    torch.from_numpy(self._dist_info)
-                    if isinstance(self._dist_info, np.ndarray)
-                    else self._dist_info
-                )
-                dist_info = dist_info.unsqueeze(0).transpose(1, -1)
-                clf_rs, clf_dict = self._aux_reward_info["clf_reward_factory"].evaluate(
-                    self._aux_reward_info["clf_reward_func"],
-                    dist_info,
-                    self._tensor_y_true,
-                    self._tensor_diffential_indices,
-                    self._tensor_diffential_probas,
-                    reduction="none",
-                    severity=self._aux_reward_info["patho_severity"],
-                    timestep=self._tensor_sim_timestep,
-                    **self._aux_reward_info["clf_reward_kwargs"],
-                )
-                clf_rs = _negate_tensor(clf_rs)
-                clf_dict = _negate_tensor(clf_dict)
-
-                clf_rs = _clamp_utils(
-                    clf_rs,
-                    self._aux_reward_info["clf_reward_min"],
-                    self._aux_reward_info["clf_reward_max"],
-                ).item()
-
-                if clf_dict is None:
-                    clf_dict = {}
-                for k in clf_dict.keys():
-                    clf_dict[k] = (
-                        clf_dict[k].item()
-                        if isinstance(clf_dict[k], torch.Tensor)
-                        else clf_dict[k]
-                    )
-
-                clf_rs_keys = [""] + list(clf_dict.keys())
-                diff = set(clf_rs_keys) - set(keys)
-                if diff:
-                    keys += list(diff)
-                    setattr(SimPaTrajInfo, "_clf_rs_keys", keys)
-
-                result = coef * clf_rs
-
-        for k in keys:
-            val = clf_rs if k == "" else clf_dict.get(k, 0.0)
-            # saving
-            self._update_attr_key("Classifier" + k + "Return", coef * val, cur_discount)
-
-        return result
-
-    def _compute_auxiliary_rewards(self, reward, done):
-        """Computes and stores auxiliary rewards.
-
-        Parameters
-        ----------
-        reward: float
-            the reward received from the environment at the current step.
-        done: bool
-            a flag indicating the end of the episode.
-
-        Returns
-        -------
-        None
-
-        """
-        flag_str = "traj_auxiliary_reward_flag"
-        if self._aux_reward_info and self._aux_reward_info.get(flag_str, False):
-            env_coef = self._aux_reward_info.get("env_reward_coef", 1.0)
-            self._define_tensors()
-            cur_discount = self._cur_discount / self._discount
-            # compute auxiliary rewards (intermediate auxiliary reward and clf reward)
-            aux_rs = self._compute_reward_shaping(cur_discount)
-            clf_rs = self._compute_clf_reward(cur_discount, done)
-            # weighted env reward
-            env_rew = env_coef * reward
-            # saving
-            self._update_attr_key("EnvReturn", env_rew, cur_discount)
-            self._update_attr_key(
-                "OptimizedReturn", env_rew + aux_rs + clf_rs, cur_discount
-            )
-
     def _compute_antecedent_symtoms_stats(self, done):
         """Computes and stores relevancy related metrics on data acquisition.
 
@@ -378,149 +136,6 @@ class SimPaTrajInfo(TrajInfo):
                 if self._num_experienced_antecedents == 0
                 else self.NumRelevantAntecedents / self._num_experienced_antecedents
             )
-            self.AvgInfoGainOnIrrelevancy = (
-                1.0
-                if self._num_irrelevancy == 0
-                else self._info_gain_on_irrelevancy / self._num_irrelevancy
-            )
-
-    def _compute_distribution_stats(self, done):
-        """Computes and stores relevancy related metrics on data prediction.
-
-        Parameters
-        ----------
-        done: bool
-            a flag indicating the end of the episode.
-
-        Returns
-        -------
-        None
-
-        """
-        if done and self._dist_info is not None:
-            pred = (
-                self._dist_info.numpy()
-                if isinstance(self._dist_info, torch.Tensor)
-                else self._dist_info
-            )
-            self.NdcgDistPred = dist_ndcg(
-                pred,
-                self._metric_y_true,
-                self._metric_diffential_indices,
-                self._metric_diffential_probas,
-                self._topk,
-                ignore_index=-1,
-            )
-            self.NcgDistPred = dist_ncg(
-                pred,
-                self._metric_y_true,
-                self._metric_diffential_indices,
-                self._metric_diffential_probas,
-                self._topk,
-                ignore_index=-1,
-            )
-            self.AvgPrecDistPred = dist_accuracy(
-                pred,
-                self._metric_y_true,
-                self._metric_diffential_indices,
-                self._metric_diffential_probas,
-                self._topk,
-                restrict_to_k=True,
-                ignore_index=-1,
-            )
-            self.AvgPrecFullDistPred = dist_accuracy(
-                pred,
-                self._metric_y_true,
-                self._metric_diffential_indices,
-                self._metric_diffential_probas,
-                self._topk,
-                restrict_to_k=False,
-                ignore_index=-1,
-            )
-
-    def _compute_trajectory_score(self, done, proba):
-        """Computes and stores the score of the whole trajectory/episode.
-
-        Parameters
-        ----------
-        done: bool
-            a flag indicating the end of the episode.
-        proba: np.ndarray
-            the current proba distribution outputed by the agent.
-
-        Returns
-        -------
-        None
-
-        """
-        if done:
-            # if kl_explore and kl_confirm is not empty
-            if len(self._kl_explore) > 0 and len(self._kl_confirm) > 0:
-                self.ExplConfAUC = kl_trajectory_auc(
-                    self._kl_explore, self._kl_confirm, "none"
-                )
-                self.ExplConfSortedAUC = kl_trajectory_auc(
-                    self._kl_explore, self._kl_confirm, "sort"
-                )
-            # compute severity stats
-            severity = self._aux_reward_info["patho_severity"]
-            threshlod = self._aux_reward_info.get("severity_threshold", 3)
-            severe_indices = (
-                None
-                if severity is None
-                else np.where(severity.cpu().numpy() < threshlod)[0]
-            )
-            sev_out, sev_in = (
-                (0.0, 0.0)
-                if proba is None
-                else numpy_get_severe_pathos_inout_ratio(
-                    proba.reshape((1, -1)),
-                    self._metric_y_true,
-                    self._metric_diffential_indices,
-                    self._metric_diffential_probas,
-                    severe_indices,
-                    diff_proba_threshold=0.01,
-                    front_broadcast_flag=True,
-                )
-            )
-            sev_f1 = (2 * sev_out * sev_in) / (sev_out + sev_in + 1e-10)
-            self.SevOut = sev_out
-            self.SevIn = sev_in
-            self.SevF1 = sev_f1
-            # compute the sum of others components except the 1st one
-            tmp = (
-                (self.RecallRelevantSymptoms * self._eval_coeffs[1])
-                + (self.RecallRelevantAntecedents * self._eval_coeffs[2])
-                + (self.AvgInfoGainOnIrrelevancy * self._eval_coeffs[3])
-            )
-            # get the sum of all the coefficients for normalization purposes
-            tot = sum(self._eval_coeffs)
-            # aggregation based on ndcg ranking metric
-            self.NdcgBasedAggScore = (
-                (self.NdcgDistPred * self._eval_coeffs[0]) + tmp
-            ) / tot
-            # aggregation based on ncg ranking metric
-            self.NcgBasedAggScore = (
-                (self.NcgDistPred * self._eval_coeffs[0]) + tmp
-            ) / tot
-            # aggregation based on avg precision ranking metric
-            # (as ncg but with boolean relevance)
-            self.AvgPrecAggScore = (
-                (self.AvgPrecDistPred * self._eval_coeffs[0]) + tmp
-            ) / tot
-            # aggregation based on avg precision ranking metric
-            # with full differential (as ncg but with boolean relevance)
-            self.AvgPrecFullAggScore = (
-                (self.AvgPrecFullDistPred * self._eval_coeffs[0]) + tmp
-            ) / tot
-            # aggregation based on ExplConfAUC
-            self.ExplConfAUCAggScore = (
-                (self.ExplConfAUC * self._eval_coeffs[0]) + tmp
-            ) / tot
-            # aggregation based on ExplConfAUC
-            self.ExplConfSortedAUCAggScore = (
-                (self.ExplConfSortedAUC * self._eval_coeffs[0]) + tmp
-            ) / tot
 
     def _get_dist_infos(self, agent_info, env_info):
         """Get and stores the data related to the pathology prediction by the agent.
@@ -574,30 +189,6 @@ class SimPaTrajInfo(TrajInfo):
             )
         return q
 
-    def _compute_kl_scores(self, proba):
-        """Computes the kl_confirm and kl_explore score.
-
-        Parameters
-        ----------
-        proba: np.ndarray
-            the current proba distribution outputed by the agent.
-        """
-        self._kl_explore.append(
-            0.0
-            if (self._first_dist_info is None or proba is None)
-            else kl_explore_score(proba.reshape((1, -1)), self._first_dist_info)[0]
-        )
-        self._kl_confirm.append(
-            0.0
-            if proba is None
-            else kl_confirm_score(
-                proba.reshape((1, -1)),
-                self._metric_y_true,
-                self._metric_diffential_indices,
-                self._metric_diffential_probas,
-            )[0]
-        )
-
     def step(self, observation, action, reward, done, agent_info, env_info):
         """Computes the trajectory info at each step of the episode.
 
@@ -624,22 +215,7 @@ class SimPaTrajInfo(TrajInfo):
         super().step(observation, action, reward, done, agent_info, env_info)
         self._prev_dist_info = self._dist_info
         self._dist_info = self._get_dist_infos(agent_info, env_info)
-        current_proba_dist = (
-            None
-            if self._dist_info is None
-            else numpy_softmax(
-                self._dist_info.cpu().numpy()
-                if isinstance(self._dist_info, torch.Tensor)
-                else self._dist_info
-            )
-        )
-        self._first_dist_info = (
-            self._first_dist_info
-            if self.Length > 1
-            else (
-                None if current_proba_dist is None else current_proba_dist.reshape((-1))
-            )
-        )
+
         if (not done) or (getattr(env_info, "diagnostic", -1) == -1):
             repeated = getattr(env_info, "is_repeated_action", 0)
             self.NumRepeatedSymptoms += repeated
@@ -655,19 +231,7 @@ class SimPaTrajInfo(TrajInfo):
                 1 if relevancy != 0 and antecedent != 0 and repeated == 0 else 0
             )
             self._num_irrelevancy += 1 if is_evidence == 0 or repeated != 0 else 0
-            is_null_dist = self._dist_info is None or self._prev_dist_info is None
-            self._info_gain_on_irrelevancy += (
-                0
-                if ((is_evidence != 0 and repeated == 0) or is_null_dist)
-                else dist_js_div(
-                    self._prev_dist_info.numpy()
-                    if isinstance(self._prev_dist_info, torch.Tensor)
-                    else self._prev_dist_info,
-                    self._dist_info.numpy()
-                    if isinstance(self._dist_info, torch.Tensor)
-                    else self._dist_info,
-                )
-            )
+
         self._num_experienced_symptoms = getattr(env_info, "sim_num_symptoms", 0)
         self._num_experienced_antecedents = getattr(env_info, "sim_num_antecedents", 0)
         self._num_evidences = getattr(env_info, "sim_num_evidences", 0)
@@ -687,11 +251,7 @@ class SimPaTrajInfo(TrajInfo):
         self._metric_diffential_probas = getattr(
             env_info, "sim_differential_probas", None
         )
-        self._compute_kl_scores(current_proba_dist)
         self._compute_antecedent_symtoms_stats(done)
-        self._compute_distribution_stats(done)
-        self._compute_auxiliary_rewards(reward, done)
-        self._compute_trajectory_score(done, current_proba_dist)
 
 
 class SimPaTrajEvalInfo(SimPaTrajInfo):

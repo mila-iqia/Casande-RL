@@ -210,15 +210,6 @@ def processing_collected_trajectories(traj_infos):
         "recall_relevant_symptoms": [],
         "num_experienced_atcd": [],
         "num_experienced_symptoms": [],
-        "avg_info_gain_on_irrelevancy": [],
-        "differential_ndcg_metric": [],
-        "differential_ncg_metric": [],
-        "differential_avg_precision_metric": [],
-        "differential_avg_precision_full_metric": [],
-        "avg_ndcg_agg_score": [],
-        "avg_ncg_agg_score": [],
-        "avg_precision_agg_score": [],
-        "avg_precision_full_agg_score": [],
         "first_symptoms": [],
         "num_simulated_evidences": [],
         "relevancy_symptoms_ratio": [],
@@ -284,23 +275,6 @@ def processing_collected_trajectories(traj_infos):
         info_dict["num_experienced_symptoms"].append(
             info.get("_num_experienced_symptoms", None)
         )
-        info_dict["avg_info_gain_on_irrelevancy"].append(
-            info.get("AvgInfoGainOnIrrelevancy", None)
-        )
-        info_dict["differential_ndcg_metric"].append(info.get("NdcgDistPred", None))
-        info_dict["differential_ncg_metric"].append(info.get("NcgDistPred", None))
-        info_dict["differential_avg_precision_metric"].append(
-            info.get("AvgPrecDistPred", None)
-        )
-        info_dict["differential_avg_precision_full_metric"].append(
-            info.get("AvgPrecFullDistPred", None)
-        )
-        info_dict["avg_ndcg_agg_score"].append(info.get("NdcgBasedAggScore", None))
-        info_dict["avg_ncg_agg_score"].append(info.get("NcgBasedAggScore", None))
-        info_dict["avg_precision_agg_score"].append(info.get("AvgPrecAggScore", None))
-        info_dict["avg_precision_full_agg_score"].append(
-            info.get("AvgPrecFullAggScore", None)
-        )
         info_dict["first_symptoms"].append(info.get("_first_symptom", None))
         info_dict["num_simulated_evidences"].append(info.get("_num_evidences", None))
         info_dict["relevancy_symptoms_ratio"].append(
@@ -348,15 +322,6 @@ def processing_collected_trajectories(traj_infos):
         "precision_relevant_symptoms",
         "recall_relevant_atcd",
         "recall_relevant_symptoms",
-        "avg_info_gain_on_irrelevancy",
-        "differential_ndcg_metric",
-        "differential_ncg_metric",
-        "differential_avg_precision_metric",
-        "differential_avg_precision_full_metric",
-        "avg_ndcg_agg_score",
-        "avg_ncg_agg_score",
-        "avg_precision_agg_score",
-        "avg_precision_full_agg_score",
         "simulated_patients",
         "collected_infos",
         "all_proba_dist",
@@ -634,15 +599,6 @@ def compute_metric(info_dict, topk):
         "recall_relevant_symptoms",
         "num_experienced_atcd",
         "num_experienced_symptoms",
-        "avg_info_gain_on_irrelevancy",
-        "differential_ndcg_metric",
-        "differential_ncg_metric",
-        "differential_avg_precision_metric",
-        "differential_avg_precision_full_metric",
-        "avg_ndcg_agg_score",
-        "avg_ncg_agg_score",
-        "avg_precision_agg_score",
-        "avg_precision_full_agg_score",
     ]
     unique_count_list = ["first_symptoms", "inquired_evidences"]
 

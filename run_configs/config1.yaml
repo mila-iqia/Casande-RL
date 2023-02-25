@@ -191,12 +191,27 @@ runner_params:
   topk: 5
   eval_coeffs: [.5, .25, .15, .1]
   traj_auxiliary_reward_flag: false
+  custom_metrics:
+      MainPerformanceMetric:
+          DDF1: 0.5
+          PER: 0.25
+          AUCTraj: 0.25
+      SecondPerformanceMetric:
+          DDF1: 0.25
+          DSF1: 0.25
+          PER: 0.25
+          AUCTraj: 0.25
+      ThirdPerformanceMetric:
+          DDF1: 0.25
+          DSF1: 0.50
+          PER: 0.25
+          
 
 # eval metrics
 eval_metrics: ['accuracy', 'f1', 'top-1-accuracy', 'top-2-accuracy', 'top-3-accuracy', 'top-5-accuracy']
 
-# performance metric, AvgPrecAggScore, top-1-accuracy, ExplConfAUCAggScore
-perf_metric: "AvgPrecAggScore"
+# performance metric, top-1-accuracy, SecondPerformanceMetric, ThirdPerformanceMetric
+perf_metric: "MainPerformanceMetric"
 
 # early stopping
 patience: 81

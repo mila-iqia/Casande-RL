@@ -13,6 +13,7 @@ from rlpyt.utils.prog_bar import ProgBarCounter
 from chloe.evaluator.batchEvaluator import evaluate as batch_evaluate
 from chloe.utils.eval_utils import MetricFactory
 from chloe.utils.sampler_utils import is_async_sampler, is_aternating_sampler
+from chloe.utils.scheduler_utils import numpy_sigmoid_scheduler
 
 BEST_MODEL_NAME = "best.pkl"
 
@@ -250,12 +251,57 @@ class PerformanceMixin:
                         result = self.metric_factory.evaluate(metric, y_true, pred_info)
                         logger.record_tabular(metric, result)
 
+
     def batch_evaluation(self):
         if hasattr(self.agent, "give_V_min_max"):
             if not self._setModelVMinMax and hasattr(self.agent.model, "set_V_min_max"):
                 self.agent.model.set_V_min_max(self.agent.V_min, self.agent.V_max)
                 self._setModelVMinMax = True
         self.agent.model.eval()
+        
+        if not hasattr(self, 'batchEvalkwargs'):
+            self.batchEvalkwargs = None
+
+        if self.batchEvalkwargs is None:
+            self.batchEvalkwargs = dict()
+            if getattr(self.algo, "reward_shaping_flag", False) and getattr(self.algo, "reward_shaping_coef", 1.0) != 0.0:
+                self.batchEvalkwargs['explorationTemporalWeight'] = numpy_sigmoid_scheduler(
+                    np.arange(self.batch_env.max_turns + 1), 
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('js_alpha', 5),
+                    self.batch_env.max_turns,
+                    0,
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('min_map_val', -10),
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('max_map_val', 10),
+                    is_decreasing=True,
+                )
+                self.batchEvalkwargs['weightExploration'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('js_weight')
+                self.batchEvalkwargs['min_exploration_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('js_min')
+                self.batchEvalkwargs['max_exploration_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('js_max')
+
+                self.batchEvalkwargs['confirmationTemporalWeight'] = numpy_sigmoid_scheduler(
+                    np.arange(self.batch_env.max_turns + 1), 
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('ce_alpha', 5),
+                    self.batch_env.max_turns,
+                    0,
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('min_map_val', -10),
+                    getattr(self.algo, "reward_shaping_kwargs", {}).get('max_map_val', 10),
+                )
+                self.batchEvalkwargs['weightConfirmation'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('ce_weight')
+                self.batchEvalkwargs['min_confirmation_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('ce_min')
+                self.batchEvalkwargs['max_confirmation_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('ce_max')
+
+                self.batchEvalkwargs['weightSeverity'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('sev_out_weight')
+                self.batchEvalkwargs['min_severity_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('sev_out_min')
+                self.batchEvalkwargs['max_severity_reward'] = getattr(self.algo, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('sev_out_max')
+
+            if getattr(self.algo, "clf_reward_flag", False) and getattr(self.algo, "clf_reward_coef", 1.0) != 0.0:
+                self.batchEvalkwargs['weightClassification'] = getattr(self.algo, "clf_reward_coef", 1.0)
+                self.batchEvalkwargs['min_classification_reward'] = None
+                self.batchEvalkwargs['max_classification_reward'] = None
+                self.batchEvalkwargs['weightSevIn'] = getattr(self.algo, "clf_reward_kwargs", {}).get('sev_in_weight')
+
+            self.batchEvalkwargs['discount'] = getattr(self.algo, "discount", 1)
+
         result = batch_evaluate(
             self.batch_env,
             self.agent,
@@ -264,17 +310,22 @@ class PerformanceMixin:
             compute_metrics_flag=True,
             batch_size=self.eval_batch_size,
             deterministic=True,
-            output_fp=None
+            output_fp=None,
+            **self.batchEvalkwargs 
         )
         self.agent.model.train()
         for k in result.keys():
             if isinstance(result[k], (float, int)):
                 k1 = k.replace("@", "_")
                 logger.record_tabular("BatchEVal_" + k1, result[k])
-        ddf1 = result.get("DDF1", 0)
-        per = result.get("PER", 0)
-        klauc = result.get("AUCTraj", 0)
-        perf = 0.5 * ddf1 + 0.25 * per + 0.25 * klauc
+        perf = None
+        for k in self.custom_batch_metrics:
+            aPerf = 0.0
+            for q in self.custom_batch_metrics.get(k, {}):
+                aPerf += result.get(q, 0) * self.custom_batch_metrics.get(k, {}).get(q, 0.0)
+            logger.record_tabular("BatchEValMetric_" + k, aPerf)
+            if self.perf_metric == k:
+                perf = aPerf
         return perf
 
     def get_eval_performance(self, *args, **kwargs):
@@ -295,7 +346,8 @@ class PerformanceMixin:
         """
         if self.batch_env is not None:
             performance = self.batch_evaluation()
-            return performance
+            if performance is not None:
+                return performance
         eval_traj_infos = None
         if self._eval:
             if isinstance(self, MinibatchRlBase):
@@ -1408,7 +1460,8 @@ class RunnerFactory:
         builder = self._builders.get(key.lower())
         if not builder:
             raise ValueError(key + " is not a valid runner key")
-        return builder(
+        custom_batch_metrics = kwargs.pop('custom_metrics', {})
+        runner = builder(
             *args,
             resume_info=resume_info,
             metrics=metrics,
@@ -1422,3 +1475,5 @@ class RunnerFactory:
             eval_batch_size=eval_batch_size,
             **kwargs,
         )
+        runner.custom_batch_metrics = custom_batch_metrics
+        return runner

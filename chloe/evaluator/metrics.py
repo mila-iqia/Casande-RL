@@ -6,6 +6,22 @@ def write_json(data, fp):
     with open(fp, "w") as outfile:
         json.dump(data, outfile, indent=4)
 
+def kl_div(log_m, tgt_p, axis=-1):
+    log_tgt_p = np.log(tgt_p + 1e-12)
+    return (tgt_p * (log_tgt_p - log_m)).sum(axis=axis)
+
+def js_div(src_p, tgt_p, axis=-1):
+    m = (src_p + tgt_p) / 2.0
+    log_m = np.log(m + 1e-12)
+    result = 0.5 * kl_div(log_m, src_p, axis) + 0.5 * kl_div(log_m, tgt_p, axis)
+    max_value = np.log(2)
+    if isinstance(result, np.ndarray):
+        result[result > max_value] = max_value
+    else:
+        if result > max_value:
+            result = max_value
+    return result / max_value
+
 def get_average_state_from_percent(data, percent=0.0, end_percent=1.0, normalize=True):
     """Get the average stat from a data sequence starting at a given percent.
     Parameters
@@ -82,6 +98,88 @@ def compute_severity_stats(preds, gt_diff, severity_mask, diff_proba_threshold):
     gt_pred_f1 = compute_f1(pred_no_gt, gt_no_pred)
     return pred_no_gt, gt_no_pred, gt_pred_f1
     
+
+def compute_exploration_reward(probas, weightExploration, explorationTemporalWeight, min_exploration_reward, max_exploration_reward):
+    if probas.shape[1] <= 1:
+        return 0.0
+    prev_p = probas[:, 0:-1]
+    next_p = probas[:, 1:]
+    reward = js_div(next_p, prev_p)
+    if min_exploration_reward is not None:
+        reward[reward < min_exploration_reward] = min_exploration_reward
+    if max_exploration_reward is not None:
+        reward[reward > max_exploration_reward] = max_exploration_reward
+    return  weightExploration * reward * np.array(explorationTemporalWeight[:reward.shape[1]]).reshape((1,-1))
+    
+def compute_confirmation_reward(probas, discount, target_dist, weightConfirmation, confirmationTemporalWeight, min_confirmation_reward, max_confirmation_reward):
+    if probas.shape[1] <= 1:
+        return 0.0
+    if len(probas.shape) > len(target_dist.shape):
+        tmp_shape = list(target_dist.shape[0:-1])  + ([1] * (len(probas.shape) - len(target_dist.shape))) + [target_dist.shape[-1]]
+        target_dist = target_dist.reshape(tmp_shape)
+    cross_entropy = -np.sum(target_dist * np.log(probas + 1e-10), axis=-1)
+    prev_p = cross_entropy[:, 0:-1]
+    next_p = cross_entropy[:, 1:]
+    reward = -((discount * next_p) - prev_p)
+    if min_confirmation_reward is not None:
+        reward[reward < min_confirmation_reward] = min_confirmation_reward
+    if max_confirmation_reward is not None:
+        reward[reward > max_confirmation_reward] = max_confirmation_reward
+    return  weightConfirmation * reward * np.array(confirmationTemporalWeight[:reward.shape[1]]).reshape((1,-1))
+    
+    
+def compute_severity_reward(probas, discount, target_dist, weightSeverity, min_severity_reward, max_severity_reward, severity_mask, treshold):
+    if probas.shape[1] <= 1:
+        return 0.0
+    if len(probas.shape) > len(target_dist.shape):
+        tmp_shape = list(target_dist.shape[0:-1])  + ([1] * (len(probas.shape) - len(target_dist.shape))) + [target_dist.shape[-1]]
+        target_dist = target_dist.reshape(tmp_shape)
+    if len(probas.shape) > len(severity_mask.shape):
+        tmp_shape = ([1] * (len(probas.shape) - len(severity_mask.shape))) + list(severity_mask.shape)
+        severity_mask = severity_mask.reshape(tmp_shape)
+    
+    gt_mask = (target_dist > treshold).astype(bool)
+    proba_mask = (probas > treshold).astype(bool)
+    
+    sev_gt_mask = (gt_mask * severity_mask).astype(bool)
+    sev_proba_mask = (proba_mask * severity_mask).astype(bool)
+    
+    sev_not_gt_not_proba = (np.logical_not(sev_gt_mask) * np.logical_not(sev_proba_mask) * severity_mask).astype(int)
+    
+    sevOut = sev_not_gt_not_proba.sum(axis=-1)
+    prev_p = sevOut[:, 0:-1]
+    next_p = sevOut[:, 1:]
+    reward = ((discount * next_p) - prev_p) * (next_p != prev_p)
+    if min_severity_reward is not None:
+        reward[reward < min_severity_reward] = min_severity_reward
+    if max_severity_reward is not None:
+        reward[reward > max_severity_reward] = max_severity_reward
+    return  weightSeverity * reward
+    
+def compute_classification_reward(probas, target_dist, weightClassification, min_classification_reward, max_classification_reward, weightSevIn, severity_mask, treshold):
+    if len(probas.shape) > len(target_dist.shape):
+        tmp_shape = list(target_dist.shape[0:-1])  + ([1] * (len(probas.shape) - len(target_dist.shape))) + [target_dist.shape[-1]]
+        target_dist = target_dist.reshape(tmp_shape)
+    if len(probas.shape) > len(severity_mask.shape):
+        tmp_shape = ([1] * (len(probas.shape) - len(severity_mask.shape))) + list(severity_mask.shape)
+        severity_mask = severity_mask.reshape(tmp_shape)
+    
+    gt_mask = (target_dist > treshold).astype(bool)
+    proba_mask = (probas > treshold).astype(bool)
+    
+    sev_gt_mask = (gt_mask * severity_mask).astype(bool)
+    sev_proba_mask = (proba_mask * severity_mask).astype(bool)
+    
+    sevIn = (sev_gt_mask * sev_proba_mask).astype(int).sum(axis=-1)
+    sevY = sev_gt_mask.astype(int).sum(axis=-1)
+    
+    cross_entropy = -np.sum(target_dist * np.log(probas + 1e-10), axis=-1)
+    reward = -(cross_entropy) + (weightSevIn * (sevIn/np.maximum(1, sevY)))
+    if min_classification_reward is not None:
+        reward[reward < min_classification_reward] = min_classification_reward
+    if max_classification_reward is not None:
+        reward[reward > max_classification_reward] = max_classification_reward
+    return  weightClassification * reward
     
 
 def kl_trajectory_auc(kl_explore, kl_confirm):
@@ -137,20 +235,85 @@ def compute_f1(p, r):
     return (2 * p * r) / (denom + 1e-10)
     
 
-def compute_metrics(gt_differential, disease, final_diags, all_diags, valid_timesteps, present_evidences, inquired_evidences, symptom_mask, atcd_mask, severity_mask, tres=0.01):
+def compute_metrics(
+    gt_differential, disease, final_diags, all_diags, batch_env_reward, valid_timesteps,
+    present_evidences, inquired_evidences, symptom_mask, atcd_mask, severity_mask, tres=0.01,
+    **kwargs
+):
+        explorationTemporalWeight = kwargs.get("explorationTemporalWeight")
+        weightExploration = kwargs.get("weightExploration")
+        min_exploration_reward = kwargs.get("min_exploration_reward")
+        max_exploration_reward = kwargs.get("max_exploration_reward")
+        
+        confirmationTemporalWeight = kwargs.get("confirmationTemporalWeight")
+        weightConfirmation = kwargs.get("weightConfirmation")
+        min_confirmation_reward = kwargs.get("min_confirmation_reward")
+        max_confirmation_reward = kwargs.get("max_confirmation_reward")
+
+        weightSeverity = kwargs.get("weightSeverity")
+        min_severity_reward = kwargs.get("min_severity_reward")
+        max_severity_reward = kwargs.get("max_severity_reward")
+
+        weightClassification = kwargs.get("weightClassification")
+        min_classification_reward = kwargs.get("min_classification_reward")
+        max_classification_reward = kwargs.get("max_classification_reward")
+        weightSevIn = kwargs.get("weightSevIn")
+        
+        discount = kwargs.get("discount")
+        discountFactor = None if discount is None else np.cumprod([1] + ([discount] * (valid_timesteps.shape[1]))).reshape((1, -1))
+        
+        
         all_indices = list(range(disease.shape[0]))
         top_ranked = np.argsort(final_diags, axis=-1)
         top_ranked = top_ranked[:, ::-1]
         gt_diff_top_ranked = np.argsort(gt_differential, axis=-1)
         gt_diff_top_ranked = gt_diff_top_ranked[:, ::-1]
         all_len = np.sum(valid_timesteps, axis=-1) + 1
-        
+
         result = {}
         result["IL"] = np.mean(all_len)
         result["GTPA"] = np.mean(final_diags[all_indices, disease] > tres)
         result["GTPA@1"] = np.mean(np.logical_and(disease == top_ranked[:, 0], final_diags[all_indices, disease] > tres))
         result["GTPA@3"] = np.mean(np.logical_and(np.any(disease.reshape(-1, 1) == top_ranked[:, 0:3], axis=-1), final_diags[all_indices, disease] > tres))
         result["GTPA@5"] = np.mean(np.logical_and(np.any(disease.reshape(-1, 1) == top_ranked[:, 0:5], axis=-1), final_diags[all_indices, disease] > tres))
+
+        totalReward = (batch_env_reward * valid_timesteps)
+        result["EnvReward"] = np.mean((batch_env_reward * valid_timesteps).sum(axis=1))
+        if discount is not None:
+            result["DiscountedEnvReward"] = np.mean((batch_env_reward * valid_timesteps * discountFactor[:, 0:batch_env_reward.shape[1]]).sum(axis=1))
+        if (explorationTemporalWeight is not None) and (weightExploration is not None):
+            explReward = compute_exploration_reward(all_diags, weightExploration, explorationTemporalWeight, min_exploration_reward, max_exploration_reward)
+            totalReward += (explReward * valid_timesteps)
+            result["ExplorationReward"] = np.mean((explReward * valid_timesteps).sum(axis=1))
+            if discount is not None:
+                result["DiscountedExplorationReward"] = np.mean((explReward * valid_timesteps * discountFactor[:, 0:explReward.shape[1]]).sum(axis=1))
+        if (confirmationTemporalWeight is not None) and (discount is not None) and (weightConfirmation is not None):
+            confReward = compute_confirmation_reward(
+                all_diags, discount, gt_differential, weightConfirmation, confirmationTemporalWeight, min_confirmation_reward, max_confirmation_reward
+            )
+            totalReward += (confReward * valid_timesteps)
+            result["ConfirmationReward"] = np.mean((confReward * valid_timesteps).sum(axis=1))
+            if discount is not None:
+                result["DiscountedConfirmationReward"] = np.mean((confReward * valid_timesteps * discountFactor[:, 0:confReward.shape[1]]).sum(axis=1))
+        if (discount is not None) and (weightSeverity is not None):
+            sevReward = compute_severity_reward(all_diags, discount, gt_differential, weightSeverity, min_severity_reward, max_severity_reward, severity_mask, tres)
+            totalReward += (sevReward * valid_timesteps)
+            result["SeverityReward"] = np.mean((sevReward * valid_timesteps).sum(axis=1))
+            if discount is not None:
+                result["DiscountedSeverityReward"] = np.mean((sevReward * valid_timesteps * discountFactor[:, 0:sevReward.shape[1]]).sum(axis=1))
+        if (weightSevIn is not None) and (weightClassification is not None):
+            clfReward = compute_classification_reward(
+                all_diags, gt_differential, weightClassification, min_classification_reward, max_classification_reward, weightSevIn, severity_mask, tres
+            )
+            tmpValid = np.zeros((all_diags.shape[0], all_diags.shape[1]))
+            tmpValid[np.arange(all_diags.shape[0]), valid_timesteps.sum(axis=1)] = 1
+            totalReward = np.concatenate((totalReward, np.zeros((all_diags.shape[0], 1))), axis=1)
+            totalReward += (clfReward * tmpValid)
+            result["ClassificationReward"] = np.mean((clfReward * tmpValid).sum(axis=1))
+            
+        result["TotalReward"] = np.mean((totalReward).sum(axis=1))
+        if discount is not None:
+            result["DiscountedTotalReward"] = np.mean((totalReward * discountFactor[:, 0:totalReward.shape[1]]).sum(axis=1))
 
         gt_diff_mask = (gt_differential > tres)
         pred_diff_mask = (final_diags > tres)
