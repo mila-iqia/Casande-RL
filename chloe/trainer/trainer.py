@@ -3,6 +3,7 @@ import json
 import os
 
 import mlflow
+import numpy as np
 import torch
 from rlpyt.envs.gym import make as gym_make
 from rlpyt.utils.collections import AttrDict
@@ -30,6 +31,7 @@ from chloe.utils.model_utils import (
 from chloe.utils.replay_buffer_utils import ReplayBufferFactory
 from chloe.utils.runner_utils import BEST_MODEL_NAME, RunnerFactory
 from chloe.utils.sampler_utils import SamplerFactory
+from chloe.utils.scheduler_utils import numpy_sigmoid_scheduler
 from chloe.utils.train_utils import (
     SimPaTrajInfo,
     load_pretrained_snapshot,
@@ -38,6 +40,16 @@ from chloe.utils.train_utils import (
 )
 
 LAST_SNAPSHOT_NAME = "params.pkl"
+
+
+def createAttrDict(params):
+    result = AttrDict({})
+    for k in params:
+        if isinstance(params.get(k), dict):
+            result[k] = createAttrDict(params.get(k))
+        else:
+            result[k] = params.get(k)
+    return result
 
 
 def pretrain_on_the_fly(gym_env_id, algo_params, agent, params, args):
@@ -155,6 +167,47 @@ def batch_eval_model_on_the_fly(params, args, run_ID, last):
     batch_size = 44000
     if "batch_size" in args and args.batch_size is not None:
         batch_size = args.batch_size
+        
+    batchEvalkwargs = {}
+    algo_params = createAttrDict(params.get('algo_params', {}))
+    if getattr(algo_params, "reward_shaping_flag", False) and getattr(algo_params, "reward_shaping_coef", 1.0) != 0.0:
+        batchEvalkwargs['explorationTemporalWeight'] = numpy_sigmoid_scheduler(
+            np.arange(env.max_turns + 1), 
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('js_alpha', 5),
+            env.max_turns,
+            0,
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('min_map_val', -10),
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('max_map_val', 10),
+            is_decreasing=True,
+        )
+        batchEvalkwargs['weightExploration'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('js_weight')
+        batchEvalkwargs['min_exploration_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('js_min')
+        batchEvalkwargs['max_exploration_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('js_max')
+
+        batchEvalkwargs['confirmationTemporalWeight'] = numpy_sigmoid_scheduler(
+            np.arange(env.max_turns + 1), 
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('ce_alpha', 5),
+            env.max_turns,
+            0,
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('min_map_val', -10),
+            getattr(algo_params, "reward_shaping_kwargs", {}).get('max_map_val', 10),
+        )
+        batchEvalkwargs['weightConfirmation'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('ce_weight')
+        batchEvalkwargs['min_confirmation_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('ce_min')
+        batchEvalkwargs['max_confirmation_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('ce_max')
+
+        batchEvalkwargs['weightSeverity'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('sev_out_weight')
+        batchEvalkwargs['min_severity_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('sev_out_min')
+        batchEvalkwargs['max_severity_reward'] = getattr(algo_params, "reward_shaping_kwargs", {}).get('bounds_dict', {}).get('sev_out_max')
+
+    if getattr(algo_params, "clf_reward_flag", False) and getattr(algo_params, "clf_reward_coef", 1.0) != 0.0:
+        batchEvalkwargs['weightClassification'] = getattr(algo_params, "clf_reward_coef", 1.0)
+        batchEvalkwargs['min_classification_reward'] = None
+        batchEvalkwargs['max_classification_reward'] = None
+        batchEvalkwargs['weightSevIn'] = getattr(algo_params, "clf_reward_kwargs", {}).get('sev_in_weight')
+
+    batchEvalkwargs['discount'] = getattr(algo_params, "discount", 1)
+    
     
     agent.eval_mode(1)
     result = evaluate(
@@ -167,7 +220,8 @@ def batch_eval_model_on_the_fly(params, args, run_ID, last):
         deterministic=args.deterministic,
         output_fp=os.path.join(output_dir, f"BatchMetrics{args.suffix}.json"),
         action_fp=os.path.join(output_dir, f"BatchActions{args.suffix}.csv"),
-        diff_fp=os.path.join(output_dir, f"BatchDifferential{args.suffix}.csv")
+        diff_fp=os.path.join(output_dir, f"BatchDifferential{args.suffix}.csv"),
+        **batchEvalkwargs
     )
 
 
