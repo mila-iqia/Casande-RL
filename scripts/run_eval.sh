@@ -1,6 +1,5 @@
 #!/bin/bash
 
-config_base='./run_configs'
 output_base='./output'
 config='config1.yaml'
 output='config1'

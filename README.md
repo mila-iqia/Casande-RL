@@ -191,7 +191,7 @@ bash ./scripts/run_eval.sh "./data" cfg.yml 0  "release_test_patients.zip" <path
 
 We used the `AUCTraj` metric as a proxy to quantify the quality of a trajectory to mimic the exploration-confirmation paradigm during our evaluation. While not perfect, it tends to capture the Area under the curve of the graph which, for each differential diagnosis prediction `p_t` made during a trajectory at time `t`, plots a point `(x, y)` where `x = 1 - exp(-KLDIV(p_t, p_0))` is a dissimilarity measure between `p_t` and `p_0` (i.e., how far is the current prediction with respect to the first prediction) and `y = exp(-KLDIV(p_t, gt_diff))` is a similarity measure between `p_t` and the ground-truth differential `gt_diff`. Properly quantifying the quality of a trajectory under the exploration-confirmation paradigm is still an open-question.
 
-The resulting metrics are located in `./ouput/config1/run_0/best_eval/BatchMetrics.json`.
+The resulting metrics are located in `./ouput/<path-where-model-where-saved>/run_0/best_eval/BatchMetrics.json`.
 
 Please note that the `DSHM` metric used in the paper is called `DSF1` in the code.
 
