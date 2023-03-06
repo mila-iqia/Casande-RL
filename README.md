@@ -165,13 +165,12 @@ As for the training pipeline, we provide scripts for running the evaluation:
 
 
 The file contains three variables that could be adjusted accordingly:
-   - `config_base`: the folder where the configuration files are located
    - `output_base`: the folder where the trained agents is saved
    - `data_base`: the folder where to get the data from
 
 To evaluate the agent, run the following command:
 ```
-bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [path-to-eval-data]
+bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [path-to-eval-data] [path-to-output-model-dir]
 ```
 
 - `path-to-bash-run-script`: Bash file containing the run instructions and some default paths (`run_eval.sh`, `run_eval_no_sharing.sh`, ).
@@ -179,13 +178,14 @@ bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [pa
 - `yaml-model-config-file`: Name of the config file containing config for training the agent, reward, and simulator.
 - `cuda-id`: id of the gpu to be used in the run.
 - `path-to-eval-data`: Path to the eval dataset.
+- `path-to-output-model-dir`: Path to the directory of the model to be evaluated (without the `run_0` suffix)
 
 
 
 To reproduce the results in the paper run the following 2 commands:
 
 ```
-bash ./scripts/run_eval.sh "./data" config1.yaml 0  "release_test_patients.zip"
+bash ./scripts/run_eval.sh "./data" cfg.yml 0  "release_test_patients.zip" <path-where-model-where-saved>
 ```
 
 

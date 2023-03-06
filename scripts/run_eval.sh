@@ -33,7 +33,12 @@ fi
 
 if [ $# -ge 5 ]
 then
-        prefix="$5"
+        output="$5"
 fi
 
-poetry run python ./chloe/eval_fly.py  --data "$data_base/$eval_data" --output "$output_base/$output$prefix" --config "$config_base/$config" --cuda_idx $cuda_idx --batch_mode --batch_size 33112  --deterministic
+if [ $# -ge 6 ]
+then
+        prefix="$6"
+fi
+
+poetry run python ./chloe/eval_fly.py  --data "$data_base/$eval_data" --output "$output_base/$output$prefix" --config "$config" --cuda_idx $cuda_idx --batch_mode --batch_size 33112  --deterministic
