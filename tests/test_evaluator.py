@@ -405,6 +405,7 @@ class TestEvaluator(object):
             "include_race_in_state": True,
             "include_ethnicity_in_state": True,
             "is_reward_relevancy_patient_specific": True,
+            "use_differential_diagnosis": True,
         }
 
         reward_config = {

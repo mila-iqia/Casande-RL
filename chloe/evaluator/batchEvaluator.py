@@ -38,6 +38,7 @@ def evaluate(
         output_fp=None,
         action_fp=None,
         diff_fp=None,
+        **kwargs,
 ):
         device = agent.device
         assert total_length > 0        
@@ -85,6 +86,7 @@ def evaluate(
             final_diagnosis = np.zeros((obs.shape[0], env.diag_size))
             batch_action_list = np.ones((obs.shape[0], total_length + 1)) * invalid_action_idx
             batch_action_list[:obs.shape[0], 0] = first_actions
+            batch_reward_list = np.zeros((obs.shape[0], total_length + 1))
             batch_diff_list = np.ones((obs.shape[0], env.diag_size, total_length + 1)) * invalid_action_idx
             while curr_turn < total_length:
                 valid_timesteps.append(np.zeros((obs.shape[0],)).astype(bool))
@@ -125,7 +127,8 @@ def evaluate(
                     break
 
                 batch_action_list[:obs.shape[0], curr_turn + 1] = (action * (1 - done)) + (invalid_action_idx * done)
-                obs, _, _ = env.step(obs, action, done)
+                obs, new_reward_s, _ = env.step(obs, action, done)
+                batch_reward_list[:obs.shape[0], curr_turn] = (new_reward_s * (1 - done))
                 valid_timesteps[-1][~done] = True 
                 curr_turn += 1
 
@@ -149,6 +152,7 @@ def evaluate(
                 
             ds_action_list.append(batch_action_list)
             ds_diff_list.append(batch_diff_list)
+            batch_env_reward = batch_reward_list[:, :len(valid_timesteps)]
             valid_timesteps = np.array(valid_timesteps).swapaxes(0, 1)
             all_diags = np.array(all_diags).swapaxes(0, 1)
             
@@ -161,9 +165,9 @@ def evaluate(
             if compute_metrics_flag:
                 batch_metrics = compute_metrics(
                     env.target_differential, true_disease,
-                    final_diagnosis, all_diags, valid_timesteps,
+                    final_diagnosis, all_diags, batch_env_reward, valid_timesteps,
                     env.all_state, env.inquired_symptoms,
-                    env.symptom_mask, env.atcd_mask, env.severity_mask, tres=0.01
+                    env.symptom_mask, env.atcd_mask, env.severity_mask, tres=0.01, **kwargs
                 )
                 tmp_n = batch_idx * batch_size
                 tmp_m = obs.shape[0]

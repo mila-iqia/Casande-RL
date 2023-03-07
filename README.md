@@ -31,6 +31,7 @@ For a quick walk-thorugh on how to get started, skip to [Installation](#installa
 ├── data
 ├── run_configs
 ├── scripts
+├── notebooks
 ├── tests
 ├── Dockerfile
 ├── LICENCE
@@ -87,9 +88,9 @@ As noticed, it is possible to specify the following elements:
    - **sampler_params**: the parameters of the selected sampler
    - **algo_params**: the parameters of the selected algorithm
    - **agent_params**: the parameters of the selected agent
-   - **runner_params**: the parameters of the selected runner
-   - **eval_metrics**: the list of metrics of interest to be monitored
-   - **perf_metric**: the main metric that will guide early stopping
+   - **runner_params**: the parameters of the selected runner. It additionnally allows to define **custom metrics** that one wants to monitored. A custom metric is defined as a aggregation of individual metrics, and therefore, wieight of such individual metrics are provided
+   - **eval_metrics**: the list of metrics of interest to be monitored. Those metric can be viewed as individual metrics computed on each trajectory.
+   - **perf_metric**: the main metric that will guide early stopping. It can be one of the **custom metrics** or **eval_metrics** defined above.
    - **perf_window_size**: the window size along which the performance metric is aggregated
    - **patience**: early stopping patience
 
@@ -164,13 +165,12 @@ As for the training pipeline, we provide scripts for running the evaluation:
 
 
 The file contains three variables that could be adjusted accordingly:
-   - `config_base`: the folder where the configuration files are located
    - `output_base`: the folder where the trained agents is saved
    - `data_base`: the folder where to get the data from
 
 To evaluate the agent, run the following command:
 ```
-bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [path-to-eval-data]
+bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [path-to-eval-data] [path-to-output-model-dir]
 ```
 
 - `path-to-bash-run-script`: Bash file containing the run instructions and some default paths (`run_eval.sh`, `run_eval_no_sharing.sh`, ).
@@ -178,15 +178,23 @@ bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [pa
 - `yaml-model-config-file`: Name of the config file containing config for training the agent, reward, and simulator.
 - `cuda-id`: id of the gpu to be used in the run.
 - `path-to-eval-data`: Path to the eval dataset.
+- `path-to-output-model-dir`: Path to the directory of the model to be evaluated (without the `run_0` suffix)
 
 
 
 To reproduce the results in the paper run the following 2 commands:
 
 ```
-bash ./scripts/run_eval.sh "./data" config1.yaml 0  "release_test_patients.zip"
+bash ./scripts/run_eval.sh "./data" cfg.yml 0  "release_test_patients.zip" <path-where-model-where-saved>
 ```
 
-The resulting metrics are located in `./ouput/config1/run_0/best_eval/BatchMetrics.json`.
+
+We used the `AUCTraj` metric as a proxy to quantify the quality of a trajectory to mimic the exploration-confirmation paradigm during our evaluation. While not perfect, it tends to capture the Area under the curve of the graph which, for each differential diagnosis prediction `p_t` made during a trajectory at time `t`, plots a point `(x, y)` where `x = 1 - exp(-KLDIV(p_t, p_0))` is a dissimilarity measure between `p_t` and `p_0` (i.e., how far is the current prediction with respect to the first prediction) and `y = exp(-KLDIV(p_t, gt_diff))` is a similarity measure between `p_t` and the ground-truth differential `gt_diff`. Properly quantifying the quality of a trajectory under the exploration-confirmation paradigm is still an open-question.
+
+The resulting metrics are located in `./ouput/<path-where-model-where-saved>/run_0/best_eval/BatchMetrics.json`.
 
 Please note that the `DSHM` metric used in the paper is called `DSF1` in the code.
+
+## Printing Interactions
+
+The folder [`notebooks`](notebooks/) contains a notebook which illustrates how to write down the trajectories followed by a given agent when interacting with a patient as well as wirting down the patient.
