@@ -10,7 +10,6 @@ from chloe.utils.sim_utils import (
     convert_patho_idx_to_patho_str,
     encode_age,
     encode_ethnicity,
-    encode_geo,
     encode_race,
     encode_sex,
     load_and_check_data,
@@ -151,6 +150,9 @@ class PatientInteractionSimulator(gym.Env):
         reward_config=None,
         shared_data_socket=None,
         use_initial_symptom_flag=False,
+        travel_evidence="trav1",
+        travel_negative_response="N",
+        default_location="AmerN"
     ):
         """Init method of the simulator.
 
@@ -270,6 +272,18 @@ class PatientInteractionSimulator(gym.Env):
                 A flag indicating whether to use the initial symptoms from the
                 dataset instead of randomly sample it. Default: False.
 
+        travel_evidence: str
+                the evidence code corresponding to traveling activity.
+                Default: trav1.
+
+        travel_negative_response: str
+                the evidence value code corresponding to a negative response to the
+                traveling activity. Default: N.
+
+        default_location: str
+                the evidence value code corresponding to the default patient location.
+                Default: AmerN.
+
 
         """
         super(PatientInteractionSimulator, self).__init__()
@@ -284,6 +298,9 @@ class PatientInteractionSimulator(gym.Env):
         self.is_reward_relevancy_patient_specific = is_reward_relevancy_patient_specific
         self.use_differential_diagnosis = use_differential_diagnosis
         self.shared_data_socket = shared_data_socket
+        self.travel_evidence = travel_evidence
+        self.travel_negative_response = travel_negative_response
+        self.default_location = default_location
         if not self.max_turns and self.include_turns_in_state:
             raise ValueError(
                 "'max_turns' could not be None/0 if 'include_turns_in_state' is True."
@@ -1520,9 +1537,11 @@ class PatientInteractionSimulator(gym.Env):
         self.frame[frame_index] = PRES_VAL
 
         # find the geographic region if any
-        self.encoded_geo = self.encode_geographic_region_if_any(
-            self.target_symptoms, "trav1"
-        )
+        self.encoded_geo = None
+        if (self.travel_evidence is not None):
+            self.encoded_geo = self.encode_geographic_region_if_any(
+                self.target_symptoms, self.travel_evidence
+            )
 
         self.is_symptom_updated = True
         self.is_evidence_absent = False
@@ -1538,7 +1557,7 @@ class PatientInteractionSimulator(gym.Env):
         # return next observation
         return self._next_observation()
 
-    def encode_geographic_region_if_any(self, target_symptoms, geo_sympt_name="trav1"):
+    def encode_geographic_region_if_any(self, target_symptoms, geo_sympt_name):
         """Encode the geographic region if any.
 
         Parameters
@@ -1558,9 +1577,25 @@ class PatientInteractionSimulator(gym.Env):
             indicator = geo_sympt_name + "_@_"
             values = [a for a in target_symptoms if a.startswith(indicator)]
             geo_value = (
-                "N" if len(values) == 0 else self.get_symptom_and_value(values[0])[1]
+                self.travel_negative_response
+                if len(values) == 0
+                else self.get_symptom_and_value(values[0])[1]
             )
-            encoded_regio = encode_geo("AmerN" if geo_value == "N" else geo_value)
+            location = (
+                self.default_location
+                if geo_value == self.travel_negative_response
+                else geo_value
+            )
+            base_idx = self.symptom_name_2_index.get(geo_sympt_name, -1)
+
+            assert base_idx != -1, (
+                f"The travel code {geo_sympt_name} is not defined. "
+                f"please configure the simulator accordingly."
+            )
+
+            assert self.symptom_possible_val_mapping.get(base_idx)
+            assert location in self.symptom_possible_val_mapping[base_idx]
+            encoded_regio = self.symptom_possible_val_mapping[base_idx][location]
         return encoded_regio
 
     def reset_with_index(self, index):
