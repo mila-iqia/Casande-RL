@@ -34,6 +34,11 @@ def create_argument_parser():
         "--model_name", required=True, help="Name of the model being evaluated",
     )
     parser.add_argument(
+        "--travel_evidence",
+        default="trav1",
+        help="Code associated with the travel evidence",
+    )
+    parser.add_argument(
         "--symptoms_fp",
         required=True,
         help="Path to the symptoms file for patients file specified in fp flag.",
@@ -138,12 +143,22 @@ def load_weight_file(weight_fp):
     return index_2_key, data
 
 
+def get_all_locations(symptoms_fp, travel_evidence):
+    with open(symptom_fp) as fp:
+        symp_data = json.load(fp)
+    all_locations = None
+    if travel_evidence is not None:
+        all_locations = symp_data.get(travel_evidence, {}).get("possible-values")
+    return all_locations
+
+
 def main(args):
 
     pathoIndex_2_key, weight_data = load_weight_file(args.weight_fp)
     data = read_pkl(args.patients_fp)
     pred_idx_proba, truth_idx_proba, gt_patho = get_pred_truth(data)
-    w_patient = get_weight(data, pathoIndex_2_key, weight_data)
+    all_locations = get_all_locations(args.symptoms_fp, args.travel_evidence)
+    w_patient = get_weight(data, pathoIndex_2_key, weight_data, all_locations)
     min_proba = args.min_proba
     data_df = create_df(pred_idx_proba, truth_idx_proba, gt_patho, w_patient, min_proba)
     metrics = compute_metrics_diff_diag(data_df)

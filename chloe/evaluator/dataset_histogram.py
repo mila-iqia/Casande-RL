@@ -22,6 +22,21 @@ def create_argument_parser():
         help="Path to the file to write the outputs of the evaluation",
     )
     parser.add_argument(
+        "--travel_evidence",
+        default="trav1",
+        help="Code associated with the travel evidence",
+    )
+    parser.add_argument(
+        "--travel_negative_response",
+        default="N",
+        help="Code associated with the negative answer of the travel evidence",
+    )
+    parser.add_argument(
+        "--default_location",
+        default="AmerN",
+        help="Code associated with the default geographical location",
+    )
+    parser.add_argument(
         "--symptoms_fp",
         default="./data/evidences.json",
         help="Path to the symptoms file for patients file specified in fp flag.",
@@ -44,9 +59,9 @@ def create_argument_parser():
     return parser
 
 
-def load_weight_file(weight_fp, condition_fp, symptom_fp):
+def load_weight_file(weight_fp, condition_fp, symptom_fp, travel_evidence):
     if (weight_fp is None) or (weight_fp == ""):
-        return None, None, None
+        return None, None, None, None, None
 
     with open(weight_fp) as fp:
         data = json.load(fp)
@@ -59,34 +74,48 @@ def load_weight_file(weight_fp, condition_fp, symptom_fp):
     }
     with open(symptom_fp) as fp:
         symp_data = json.load(fp)
-    is_geo_present = "trav1" in symp_data
-    return is_geo_present, name_2_index, index_2_key, data
+    is_geo_present = travel_evidence in symp_data
+    all_locations=None
+    if is_geo_present:
+        all_locations = symp_data.get(travel_evidence, {}).get("possible-values")
+    return is_geo_present, name_2_index, index_2_key, data, all_locations
 
 
-def compute_geo_region(symptoms, is_geo_pres):
+def compute_geo_region(
+    symptoms, is_geo_pres, travel_evidence, travel_negative_response, default_location
+):
     if not is_geo_pres:
         return None
-    indicator = "trav1" + "_@_"
+    indicator = travel_evidence + "_@_"
     values = [a for a in symptoms if a.startswith(indicator)]
     if len(values) == 0:
-        geo_value = "N"
+        geo_value = travel_negative_response
     else:
         idx = values[0].find("_@_")
         geo_value = values[0][idx + 3 :]
-    if geo_value == "N":
-        geo_value = "AmerN"
+    if geo_value == travel_negative_response:
+        geo_value = default_location
     return geo_value
 
 
-def get_weight_map(patho_name, name_2_index, index_2_key, weight_data, sex, geo, age):
+def get_weight_map(
+    patho_name, name_2_index, index_2_key, weight_data, sex, geo, age, all_locations
+):
     index = name_2_index[patho_name]
     patho_key = index_2_key[index]
-    return get_patient_weight_factor(index_2_key, weight_data, patho_key, sex, geo, age)
+    return get_patient_weight_factor(
+        index_2_key, weight_data, patho_key, sex, geo, age, all_locations
+    )
 
 
-def compute_patient_weight(data, is_geo_pres, name_2_index, index_2_key, weight_data):
+def compute_patient_weight(
+    data, is_geo_pres, name_2_index, index_2_key, weight_data, all_locations,
+    travel_evidence, travel_negative_response, default_location
+):
     data["GEO_REGION"] = data["SYMPTOMS"].apply(
-        lambda x: compute_geo_region(x, is_geo_pres)
+        lambda x: compute_geo_region(
+            x, is_geo_pres, travel_evidence, travel_negative_response, default_location
+        )
     )
     columns = [
         "PATHOLOGY",
@@ -96,7 +125,7 @@ def compute_patient_weight(data, is_geo_pres, name_2_index, index_2_key, weight_
     ]
     data["WEIGHT_FACTOR"] = data[columns].apply(
         lambda x: get_weight_map(
-            x[0], name_2_index, index_2_key, weight_data, x[1], x[2], x[3]
+            x[0], name_2_index, index_2_key, weight_data, x[1], x[2], x[3], all_locations
         ),
         axis=1,
     )
@@ -131,7 +160,8 @@ def main(args):
             patho_name_2_index,
             patho_index_2_key,
             patho_weight_data,
-        ] = load_weight_file(args.weight_fp, args.conditions_fp, args.symptoms_fp)
+            all_locations,
+        ] = load_weight_file(args.weight_fp, args.conditions_fp, args.symptoms_fp, args.travel_evidence)
         # compute weight data
         data = compute_patient_weight(
             data,
@@ -139,6 +169,10 @@ def main(args):
             patho_name_2_index,
             patho_index_2_key,
             patho_weight_data,
+            all_locations,
+            args.travel_evidence,
+            args.travel_negative_response,
+            args.default_location
         )
         df2 = data.groupby(["PATHOLOGY"]).agg({"WEIGHT_FACTOR": "sum"})
         sum_weights = df2.WEIGHT_FACTOR.agg("sum")

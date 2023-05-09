@@ -5,7 +5,7 @@ import pickle
 
 from chloe.utils.misc_eval_utils import get_pred_truth, get_weight
 from chloe.utils.read_utils import read_pkl
-from chloe.utils.sim_utils import clean, decode_geo, decode_sex
+from chloe.utils.sim_utils import clean, decode_sex
 
 
 def create_argument_parser():
@@ -27,6 +27,11 @@ def create_argument_parser():
         "--name",
         default="Extracted_Trajectory_Info",
         help="Name of the model being evaluated",
+    )
+    parser.add_argument(
+        "--travel_evidence",
+        default="trav1",
+        help="Code associated with the travel evidence",
     )
     parser.add_argument(
         "--symptoms_fp",
@@ -65,7 +70,7 @@ def load_weight_file(weight_fp):
     return index_2_key, data
 
 
-def load_cond_and_sympt(condition_fp, symptom_fp):
+def load_cond_and_sympt(condition_fp, symptom_fp, travel_evidence):
     with open(condition_fp) as fp:
         cond_data = json.load(fp)
     cond_index_2_key = sorted(list(cond_data.keys()))
@@ -76,20 +81,25 @@ def load_cond_and_sympt(condition_fp, symptom_fp):
     with open(symptom_fp) as fp:
         symp_data = json.load(fp)
     symp_index_2_key = sorted(list(symp_data.keys()))
+    for k in symp_index_2_key:
+        symp_data[k]["name"] = clean(symp_data[k]["name"])
     symp_index_2_name = [
-        clean(symp_data[symp_index_2_key[i]]["name"])
+        symp_data[symp_index_2_key[i]]["name"]
         for i in range(len(symp_index_2_key))
     ]
     symp_index_2_atcd_flg = [
         symp_data[symp_index_2_key[i]].get("is_antecedent", False)
         for i in range(len(symp_index_2_key))
     ]
-    return cond_index_2_name, symp_index_2_name, symp_index_2_atcd_flg
+    all_locations = None
+    if travel_evidence is not None:
+        all_locations = symp_data.get(travel_evidence, {}).get("possible-values")
+    return cond_index_2_name, symp_index_2_name, symp_index_2_atcd_flg, all_locations
 
 
 def main(args):
-    out = load_cond_and_sympt(args.conditions_fp, args.symptoms_fp)
-    cond_index_2_name, symp_index_2_name, symp_index_2_atcd_flg = out
+    out = load_cond_and_sympt(args.conditions_fp, args.symptoms_fp, args.travel_evidence)
+    cond_index_2_name, symp_index_2_name, symp_index_2_atcd_flg, all_locations = out
     pathoIndex_2_key, weight_data = load_weight_file(args.weight_fp)
     data = read_pkl(args.patients_fp)
     pred_idx_proba, truth_idx_proba, gt_patho = get_pred_truth(data, cond_index_2_name)
@@ -106,11 +116,18 @@ def main(args):
     all_geo = (
         [None] * len(gt_patho)
         if all_geo is None
-        else [decode_geo(geo) if not isinstance(geo, str) else geo for geo in all_geo]
+        else [
+            (
+                all_locations[geo]
+                if ((not isinstance(geo, str)) and (all_locations is not None))
+                else geo
+            )
+            for geo in all_geo
+        ]
     )
     all_age = [None] * len(gt_patho) if all_age is None else all_age
 
-    w_patient = get_weight(data, pathoIndex_2_key, weight_data)
+    w_patient = get_weight(data, pathoIndex_2_key, weight_data, all_locations)
 
     all_inquired_evidences = data["data"]["inquired_evidences"]
     all_inquired_evidences = [

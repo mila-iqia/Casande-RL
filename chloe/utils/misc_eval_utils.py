@@ -13,10 +13,12 @@ from chloe.utils.dist_metric import (
     numpy_get_severe_pathos_inout_ratio,
     numpy_softmax,
 )
-from chloe.utils.sim_utils import decode_geo, decode_sex
+from chloe.utils.sim_utils import decode_sex
 
 
-def get_patient_weight_factor(pathoIndex_2_key, weight_data, patho, sex, geo, age):
+def get_patient_weight_factor(
+    pathoIndex_2_key, weight_data, patho, sex, geo, age, all_locations
+):
     """Utility function to get the weight of the patient given his information.
 
     Parameters
@@ -34,6 +36,8 @@ def get_patient_weight_factor(pathoIndex_2_key, weight_data, patho, sex, geo, ag
         geographic code of the patient of interest
     age :  int
         age of the patient of interest
+    all_locations :  list
+        list of all possible geographical locations
     Returns
     -------
     result: float
@@ -44,7 +48,11 @@ def get_patient_weight_factor(pathoIndex_2_key, weight_data, patho, sex, geo, ag
     if (sex is None) or (geo is None) or (age is None):
         return 1.0
     sex = decode_sex(sex) if not isinstance(sex, str) else sex
-    geo = decode_geo(geo) if not isinstance(geo, str) else geo
+    geo = (
+        all_locations[geo]
+        if ((not isinstance(geo, str)) and (all_locations is not None))
+        else geo
+    )
     patho = pathoIndex_2_key[patho] if not isinstance(patho, str) else patho
     all_options = weight_data.get(patho, {}).get(sex, {}).get(geo, [])
     if len(all_options) == 0:
@@ -238,7 +246,7 @@ def combine_proba_idx_mass(
     return output
 
 
-def get_weight(data_stats, pathoIndex_2_key, weight_data):
+def get_weight(data_stats, pathoIndex_2_key, weight_data, all_locations):
     """Utility function to extract the weight factor of each patient from input.
 
     Parameters
@@ -250,6 +258,8 @@ def get_weight(data_stats, pathoIndex_2_key, weight_data):
     weight_data :  dict
         the data containing the weights of the patho of the form:
         (patho, sex, geo) -> [(AgeMin, AgeMax, Factor)*]
+    all_locations :  list
+        list of all possible geographical locations
     Returns
     -------
     result: list
@@ -268,7 +278,9 @@ def get_weight(data_stats, pathoIndex_2_key, weight_data):
         return [1.0] * len(all_patho)
 
     result = [
-        get_patient_weight_factor(pathoIndex_2_key, weight_data, patho, sex, geo, age)
+        get_patient_weight_factor(
+            pathoIndex_2_key, weight_data, patho, sex, geo, age, all_locations
+        )
         for patho, sex, geo, age in zip(all_patho, all_sex, all_geo, all_age)
     ]
     return result

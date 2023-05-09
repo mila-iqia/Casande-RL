@@ -182,9 +182,13 @@ bash [path-to-bash-run-script] [data-dir] [yaml-model-config-file] [cuda-id] [pa
 
 
 
-To reproduce the results in the paper run the following 2 commands:
+To reproduce the results in the paper, do the follwing:
+
+Depending on which version of the DDXPLUS dataset you are usig, rename either config1_eng.yaml or config1_fr.yaml to config1.yaml, and then run the following 2 commands:
 
 ```
+bash ./scripts/run_train.sh "./data" config1.yaml "/tmp/plasma" 0 4
+
 bash ./scripts/run_eval.sh "./data" cfg.yml 0  "release_test_patients.zip" <path-where-model-where-saved>
 ```
 

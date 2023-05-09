@@ -8,7 +8,6 @@ import numpy as np
 from chloe.utils.sim_utils import (
     encode_age,
     encode_ethnicity,
-    encode_geo,
     encode_race,
     encode_sex,
     load_and_check_data,
